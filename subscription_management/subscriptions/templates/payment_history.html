@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .hover-scale {
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .hover-scale:hover {
+        transform: scale(1.05);
+    }
+
+    .payment-history-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .payment-card {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        padding: 20px;
+        transition: transform 0.3s ease;
+    }
+
+    .payment-card:hover {
+        transform: scale(1.02);
+    }
+
+    .payment-card-header {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .payment-details {
+        font-size: 1rem;
+        color: #555;
+        margin-bottom: 10px;
+    }
+
+    .payment-details span {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .value {
+        color: #007bff;
+    }
+
+    .payment-card-footer {
+        text-align: right;
+        margin-top: 15px;
+    }
+
+    .payment-card-footer .btn {
+        font-size: 0.875rem;
+        padding: 8px 15px;
+        border-radius: 5px;
+    }
+
+    .btn-back {
+        background-color: #6c757d;
+        color: #fff;
+        border: none;
+    }
+</style>
+
+<div class="container mt-5 payment-history-container">
+    
+    <a href="{% url 'subscriptions:manage_subs' %}" class="btn btn-back mt-4">Back to Subscriptions</a>
+    <h1 class="fw-bold mb-4">{{ subscription.name }} - Payment History</h1>
+
+    {% if payment_history %}
+        <div class="row">
+            {% for payment in payment_history %}
+                <div class="col-12 mb-4">
+                    <div class="payment-card hover-scale">
+                        <div class="payment-card-header">
+                            Payment on {{ payment.paid_date|date:"F j, Y" }}
+                        </div>
+
+                        <div class="payment-details">
+                            <div><span>Amount Paid:</span> <span class="value">${{ subscription.cost }}</span></div>
+                        </div>
+
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">No payments have been recorded for this subscription.</div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

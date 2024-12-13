@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+<style>
+    .hover-scale {
+        transition: transform 0.15s ease-in-out;
+    }
+
+    .hover-scale:hover {
+        transform: scale(1.05);
+    }
+
+    @media (max-width: 768px) {
+        .subscription-table {
+            display: none;
+        }
+
+        .subscription-cards {
+            display: block;
+        }
+
+        .subscription-card {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border: 1px solid rgba(0,0,0,.125);
+            border-radius: 0.25rem;
+        }
+
+        .subscription-card-label {
+            font-weight: 600;
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+
+        .subscription-card-value {
+            font-size: 1rem;
+        }
+    }
+
+    @media (min-width: 769px) {
+        .subscription-table {
+            display: block;
+        }
+
+        .subscription-cards {
+            display: none;
+        }
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-bold">Manage Subscriptions</h1>
+        <a href="{% url 'subscriptions:add_subs_view' %}" class="btn btn-primary rounded-pill px-4 hover-scale">
+            <i class="fas fa-plus-circle me-2"></i>Add Subscription
+        </a>
+    </div>
+
+    <!-- Desktop Table View -->
+    <div class="card shadow-sm border-0 subscription-table">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr class="bg-light">
+                            <th class="px-4">#</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Cost</th>
+                            <th>Renewal Frequency</th>
+                            <th>Next Due Date</th>
+                            <th class="px-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sub in subscriptions %}
+                        <tr class="align-middle">
+                            <td class="px-4">{{ forloop.counter }}</td>
+                            <td>{{ sub.name }}</td>
+                            <td><span class="badge bg-light text-dark">{{ sub.get_category_display }}</span></td>
+                            <td class="fw-bold text-success">${{ sub.cost }}</td>
+                            <td>{{ sub.get_renewal_frequency_display }}</td>
+                            <td>{{ sub.next_due_date }}</td>
+                            <td class="px-4">
+                                <div class="d-flex gap-2">
+                                    <a href="{% url 'subscriptions:edit_subscription' sub.id %}" 
+                                       class="btn btn-sm btn-outline-warning rounded-pill hover-scale"
+                                       title="Edit Subscription">
+                                        <i class="fas fa-pencil-alt me-1"></i>Edit
+                                    </a>
+                                    <form action="{% url 'subscriptions:delete_subscription' sub.id %}" method="POST" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" 
+                                                class="btn btn-sm btn-outline-danger rounded-pill hover-scale"
+                                                title="Delete Subscription">
+                                            <i class="fas fa-trash me-1"></i>Delete
+                                        </button>
+                                    </form>
+                                    <a href="{% url 'subscriptions:record_payment' sub.id %}" class="btn btn-sm btn-outline-success rounded-pill">
+                                        Mark as paid
+                                    </a>
+                                    <a href="{% url 'subscriptions:payment_history' sub.id %}" class="btn btn-sm btn-outline-success rounded-pill">
+                                        History
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-5">
+                                <div class="text-muted">
+                                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                                    <p class="mb-0">No subscriptions found.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Card View -->
+    <div class="subscription-cards">
+        {% for sub in subscriptions %}
+        <div class="subscription-card shadow-sm">
+            <div class="mb-2">
+                <span class="subscription-card-label">Name:</span>
+                <span class="subscription-card-value">{{ sub.name }}</span>
+            </div>
+            <div class="mb-2">
+                <span class="subscription-card-label">Category:</span>
+                <span class="badge bg-light text-dark">{{ sub.get_category_display }}</span>
+            </div>
+            <div class="mb-2">
+                <span class="subscription-card-label">Cost:</span>
+                <span class="subscription-card-value text-success fw-bold">${{ sub.cost }}</span>
+            </div>
+            <div class="mb-2">
+                <span class="subscription-card-label">Renewal:</span>
+                <span class="subscription-card-value">{{ sub.get_renewal_frequency_display }}</span>
+            </div>
+            <div class="mb-3">
+                <span class="subscription-card-label">Next Due:</span>
+                <span class="subscription-card-value">{{ sub.next_due_date }}</span>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{% url 'subscriptions:edit_subscription' sub.id %}" 
+                   class="btn btn-sm btn-outline-warning rounded-pill hover-scale flex-grow-1"
+                   title="Edit Subscription">
+                    <i class="fas fa-pencil-alt me-1"></i>Edit
+                </a>
+                <form action="{% url 'subscriptions:delete_subscription' sub.id %}" method="POST" class="flex-grow-1">
+                    {% csrf_token %}
+                    <button type="submit" 
+                            class="btn btn-sm btn-outline-danger rounded-pill hover-scale w-100"
+                            title="Delete Subscription">
+                        <i class="fas fa-trash me-1"></i>Delete
+                    </button>
+                </form>
+                <a href="{% url 'subscriptions:record_payment' sub.id %}" class="btn btn-sm btn-outline-success rounded-pill hover-scale flex-grow-1">
+                    Mark as paid
+                </a>
+                <a href="{% url 'subscriptions:payment_history' sub.id %}" class="btn btn-sm btn-outline-success rounded-pill hover-scale flex-grow-1">
+                    History
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-5">
+            <div class="text-muted">
+                <i class="fas fa-inbox fa-3x mb-3"></i>
+                <p class="mb-0">No subscriptions found.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

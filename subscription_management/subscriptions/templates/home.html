@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="text-center">
+        <h1 class="display-4 text-primary">Welcome to Subscription Manager</h1>
+        <p class="lead text-muted">Track your subscriptions, get payment reminders, and stay organized.</p>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-primary">Manage Subscriptions</h5>
+                    <p class="card-text text-muted">Add, edit, and organize your subscriptions effortlessly.</p>
+                    <a href="{% url 'subscriptions:manage_subs' %}" class="btn btn-outline-primary">View Subscriptions</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-primary">Get Reminders</h5>
+                    <p class="card-text text-muted">Never miss a payment with timely reminders.</p>
+                    <a href="{% url 'subscriptions:analys_report' %}" class="btn btn-outline-primary">Set Reminders</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-primary">Analyze Reports</h5>
+                    <p class="card-text text-muted">Gain insights into your spending patterns.</p>
+                    <a href="{% url 'subscriptions:get_reminders' %}" class="btn btn-outline-primary">View Reports</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
