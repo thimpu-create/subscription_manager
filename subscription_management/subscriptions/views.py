@@ -2,23 +2,28 @@ from django.shortcuts import render,redirect,get_object_or_404
 from .models import *
 from .forms import *
 from django.http.response import HttpResponse
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
-
+@login_required
 def home(request):
     return render(request, 'home.html')
 
+@login_required
 
 def manage_subs(request):
     subscriptions = Subscription.objects.all().order_by('next_due_date')  # Order by the next due date, descending
     return render(request, 'manage_subscription.html', {'subscriptions': subscriptions})
+@login_required
 
 def get_reminders(request):
     return render(request, 'get_reminders.html')
+@login_required
 
 def analys_report(request):
     return render(request, 'analys_reports.html')
 
+@login_required
 
 def add_subs_view(request):
     if request.method == "GET":
@@ -30,6 +35,7 @@ def add_subs_view(request):
             form.save()
             return redirect('subscriptions:manage_subs')
 
+@login_required
 
 def record_payment(request, subscription_id):
     # Fetch the subscription object by its ID
@@ -58,6 +64,7 @@ def record_payment(request, subscription_id):
 
     return redirect('subscriptions:manage_subs')  # Redirect to the subscriptions management page
 
+@login_required
 
 def edit_subscription(request, subscription_id):
     # Retrieve the subscription object by its ID
@@ -78,6 +85,7 @@ def edit_subscription(request, subscription_id):
 
     # Render the form in the template
     return render(request, 'edit_subs.html', {'form': form})
+@login_required
 
 def deleted_subscription(request, subscription_id):
     # Fetch the subscription object by its ID, or return 404 if not found
@@ -89,6 +97,7 @@ def deleted_subscription(request, subscription_id):
     # Optionally, redirect to the subscriptions management page or another page
     return redirect('subscriptions:manage_subs')  # Adjust the URL name to match your view
 
+@login_required
 
 def payment_history(request, subscription_id):
     # Fetch the subscription by its ID
@@ -99,3 +108,10 @@ def payment_history(request, subscription_id):
 
     # Pass the subscription and payment history to the template
     return render(request, 'payment_history.html', {'subscription': subscription, 'payment_history': payment_history})
+
+
+
+def login_form(request):
+    if request.user.is_authenticated:
+        return redirect('subscriptions:home')
+    return render(request, 'login_form.html')

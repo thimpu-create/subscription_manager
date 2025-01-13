@@ -125,3 +125,13 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+# settings.py or supabase_config.py
+from supabase import create_client
+
+# Supabase credentials (replace with your actual values)
+SUPABASE_URL = "https://tveptgfllwohdbchkxuw.supabase.co"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2ZXB0Z2ZsbHdvaGRiY2hreHV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzYyMzQ2NTMsImV4cCI6MjA1MTgxMDY1M30.ZSL0d1gO8tQKiM0QZVHGGe3jWmAaPlUxrVJyKqxeq7E"
+
