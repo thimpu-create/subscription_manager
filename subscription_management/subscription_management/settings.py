@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'subscriptions'
+    'subscriptions',
+    'settings',
 ]
 
 INSTALLED_APPS += ['crispy_forms']
@@ -126,7 +127,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
+LOGIN_URL = 'subscriptions:login_form'
 
 # settings.py or supabase_config.py
 from supabase import create_client
@@ -135,3 +136,10 @@ from supabase import create_client
 SUPABASE_URL = "https://tveptgfllwohdbchkxuw.supabase.co"
 SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2ZXB0Z2ZsbHdvaGRiY2hreHV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzYyMzQ2NTMsImV4cCI6MjA1MTgxMDY1M30.ZSL0d1gO8tQKiM0QZVHGGe3jWmAaPlUxrVJyKqxeq7E"
 
+# Celery configuration
+CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Redis broker URL
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+
+# Celery Beat for periodic tasks
+INSTALLED_APPS += ['django_celery_beat']

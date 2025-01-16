@@ -3,6 +3,7 @@ from .models import *
 from .forms import *
 from django.http.response import HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
 # Create your views here.
 
 @login_required
@@ -12,7 +13,7 @@ def home(request):
 @login_required
 
 def manage_subs(request):
-    subscriptions = Subscription.objects.all().order_by('next_due_date')  # Order by the next due date, descending
+    subscriptions = Subscription.objects.filter(user=request.user).order_by('next_due_date')  # Order by the next due date, descending
     return render(request, 'manage_subscription.html', {'subscriptions': subscriptions})
 @login_required
 
@@ -27,12 +28,14 @@ def analys_report(request):
 
 def add_subs_view(request):
     if request.method == "GET":
-        form = SubscriptionForm()
+        form = SubscriptionForm(user=request.user)
         return render(request, 'add_subs.html', {'form': form})
     if request.method == "POST":
         form = SubscriptionForm(request.POST)
         if form.is_valid():
-            form.save()
+            subscription = form.save(commit=False)
+            subscription.user = request.user
+            subscription.save()
             return redirect('subscriptions:manage_subs')
 
 @login_required
@@ -86,7 +89,6 @@ def edit_subscription(request, subscription_id):
     # Render the form in the template
     return render(request, 'edit_subs.html', {'form': form})
 @login_required
-
 def deleted_subscription(request, subscription_id):
     # Fetch the subscription object by its ID, or return 404 if not found
     subscription = get_object_or_404(Subscription, id=subscription_id)
@@ -98,7 +100,6 @@ def deleted_subscription(request, subscription_id):
     return redirect('subscriptions:manage_subs')  # Adjust the URL name to match your view
 
 @login_required
-
 def payment_history(request, subscription_id):
     # Fetch the subscription by its ID
     subscription = get_object_or_404(Subscription, id=subscription_id)
@@ -112,6 +113,15 @@ def payment_history(request, subscription_id):
 
 
 def login_form(request):
-    if request.user.is_authenticated:
-        return redirect('subscriptions:home')
     return render(request, 'login_form.html')
+
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('subscriptions:home')
+        return redirect('subscriptions:login_form')
+    

@@ -34,7 +34,7 @@
                 <div class="login-card p-4">
                     <h2 class="text-center mb-4">Login</h2>
                     
-                    <form method="POST">
+                    <form method="POST" action = "{% url 'subscriptions:login_view' %}">
                         {% csrf_token %}
                         
                         <div class="mb-3">
