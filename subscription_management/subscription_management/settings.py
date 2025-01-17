@@ -140,6 +140,16 @@ SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Redis broker URL
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
+CELERYD_POOL = 'solo'
 
 # Celery Beat for periodic tasks
 INSTALLED_APPS += ['django_celery_beat']
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'thimpu@adventurecode.io'
+EMAIL_HOST_PASSWORD = 'xflc scof zcik jqaa'
