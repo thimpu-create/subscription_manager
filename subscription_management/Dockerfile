@@ -33,4 +33,5 @@ EXPOSE 8000
 ENV DJANGO_SETTINGS_MODULE=subscription_management.settings
 
 # Start the application using the built-in Python server
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "subscription_management.wsgi:application"]
+
