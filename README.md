@@ -57,3 +57,63 @@ A simple subscription management system built with Django, designed to track you
 - **Mark Subscription as Paid**: Once a subscription is added, you can mark it as paid by clicking the "Mark as Paid" button on the subscription list page.
 - **View Payment History**: Click on a subscription to see the payment history for that specific subscription.
 - **Manage Subscriptions**: Edit or delete subscriptions as needed from the subscription list.
+
+## Running the Application with Docker
+
+### Prerequisites
+
+- Docker installed on your machine
+
+### Steps
+
+1. **Build the Docker image:**
+   
+   Open a terminal and navigate to the project directory:
+   
+   ```sh
+   cd /e:/django_projects/subscription_management
+   ```
+   
+   Build the Docker image:
+   
+   ```sh
+   docker build -t subscription_management .
+   ```
+
+2. **Run the Docker container:**
+   
+   ```sh
+   docker run -d -p 8000:8000 subscription_management
+   ```
+
+3. **Access the application:**
+   
+   Open your web browser and go to `http://localhost:8000` to see the application running.
+
+### Additional Commands
+
+- **Stopping the container:**
+  
+  Find the container ID:
+  
+  ```sh
+  docker ps
+  ```
+  
+  Stop the container:
+  
+  ```sh
+  docker stop <container_id>
+  ```
+
+- **Removing the container:**
+  
+  ```sh
+  docker rm <container_id>
+  ```
+
+- **Removing the image:**
+  
+  ```sh
+  docker rmi subscription_management
+  ```
