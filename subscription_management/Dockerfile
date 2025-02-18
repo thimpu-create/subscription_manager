@@ -1,25 +1,36 @@
-# Use the official Python image from the Docker Hub
-FROM python:3.9-slim
+# Use an official Python runtime as a parent image
+FROM python:3.11
 
 # Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Set the working directory
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the requirements file into the container
+# Copy the requirements file first
 COPY requirements.txt /app/
 
-# Install the dependencies
+# Install dependencies
 RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install -r /app/requirements.txt
 
-# Copy the rest of the application code into the container
+# Copy the entire project (including manage.py) to the container
 COPY . /app/
 
-# Expose the port the app runs on
+# Run migrations
+RUN python3 manage.py migrate
+
+# Create superuser (non-interactively)
+RUN python3 manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'admin@example.com', 'password')"
+
+# # Collect static files (optional)
+# RUN python3 manage.py collectstatic --noinput
+
+# Expose the application port
 EXPOSE 8000
 
-# Run the application using Django's development server
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Set environment variables for Django settings (optional)
+ENV DJANGO_SETTINGS_MODULE=subscription_management.settings
+
+# Start the application using the built-in Python server
+CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
