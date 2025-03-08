@@ -1,27 +1,38 @@
 # Use an official Python runtime as a parent image
-FROM python:3.11
+FROM python:3.11-slim
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
 
-# Set the working directory inside the container
+# Set working directory
 WORKDIR /app
 
-# Copy the requirements file first
-COPY requirements.txt /app/
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install dependencies
-RUN pip install --upgrade pip
-RUN pip install -r /app/requirements.txt
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install gunicorn
 
-# Copy the entire project (including manage.py) to the container
-COPY . /app/
+# Copy project
+COPY . .
 
-# Expose the application port
+# Collect static files
+RUN python manage.py collectstatic --noinput
+
+# Run migrations
+RUN python manage.py migrate
+
+# Create non-root user
+RUN useradd -m myuser
+USER myuser
+
+# Expose the port
 EXPOSE 8000
 
-# Set environment variables for Django settings (optional)
-ENV DJANGO_SETTINGS_MODULE=my_project.settings
-
-# Start the application using Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "my_project.wsgi:application"]
+# Start Gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "subscription_management.wsgi:application"]
