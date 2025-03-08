@@ -1,15 +1,9 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.11-slim'
-            args '-v $HOME/.cache:/root/.cache'
-        }
-    }
+    agent any
 
     environment {
         DOCKER_IMAGE = 'subscription-manager'
         DOCKER_TAG = "${BUILD_NUMBER}"
-        HOME = '.'
     }
 
     stages {
@@ -19,23 +13,34 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Setup Python') {
             steps {
-                sh '''
-                    python -m pip install --upgrade pip
-                    python -m pip install -r requirements.txt
-                '''
+                script {
+                    sh '''
+                        # Create virtual environment
+                        python3 -m venv venv
+                        . venv/bin/activate
+                        
+                        # Install dependencies
+                        pip install --upgrade pip
+                        pip install -r requirements.txt
+                    '''
+                }
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh 'python manage.py test'
+                script {
+                    sh '''
+                        . venv/bin/activate
+                        python manage.py test
+                    '''
+                }
             }
         }
 
         stage('Build Docker Image') {
-            agent any  // Switch back to Jenkins agent for Docker commands
             steps {
                 script {
                     try {
@@ -46,14 +51,12 @@ pipeline {
                     } catch (err) {
                         echo "Docker build failed: ${err}"
                         currentBuild.result = 'FAILURE'
-                        error("Docker build failed")
                     }
                 }
             }
         }
 
         stage('Deploy Local') {
-            agent any  // Use Jenkins agent for deployment
             when {
                 expression { currentBuild.result != 'FAILURE' }
             }
@@ -67,7 +70,6 @@ pipeline {
                     } catch (err) {
                         echo "Deployment failed: ${err}"
                         currentBuild.result = 'FAILURE'
-                        error("Deployment failed")
                     }
                 }
             }
@@ -77,6 +79,16 @@ pipeline {
     post {
         always {
             cleanWs()
+            script {
+                try {
+                    sh '''
+                        docker system prune -af
+                        docker image prune -af
+                    '''
+                } catch (err) {
+                    echo "Cleanup failed: ${err}"
+                }
+            }
         }
         success {
             echo 'Build and deployment successful!'
