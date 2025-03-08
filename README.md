@@ -77,13 +77,13 @@ A simple subscription management system built with Django, designed to track you
    Build the Docker image:
    
    ```sh
-   docker build -t subscription_management .
+   docker build --no-cache -t subscriptions -f Dockerfile subscription_management/
    ```
 
 2. **Run the Docker container:**
    
    ```sh
-   docker run -d -p 8000:8000 subscription_management
+   docker run -d -p 8000:8000 subscriptions
    ```
 
 3. **Access the application:**

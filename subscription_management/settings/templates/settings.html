@@ -1,168 +1,332 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container py-5">
-    <!-- Settings Header -->
-    <h2 class="mb-4">Account Settings</h2>
+<style>
+    /* Base Layout */
+    .settings-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: #fff;
+        border-radius: 24px;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
 
-    <!-- Settings Navigation Tabs -->
-    <div class="row">
+    /* Sidebar Styles */
+    .settings-sidebar {
+        background: #f8fafc;
+        border-right: 1px solid #e5e7eb;
+        height: 100%;
+        min-height: 90vh;
+        padding: 2rem;
+    }
+
+    .nav-link {
+        color: #64748b;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 0.5rem;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .nav-link:hover {
+        background: #f1f5f9;
+        color: #2563eb;
+        transform: translateX(5px);
+    }
+
+    .nav-link.active {
+        background: #2563eb;
+        color: white;
+    }
+
+    /* Content Area */
+    .settings-content {
+        padding: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #0f172a;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f1f5f9;
+    }
+
+    /* Form Elements */
+    .form-control {
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+
+    /* Card Design */
+    .settings-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .settings-card:hover {
+        border-color: #2563eb;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Switch Toggles */
+    .form-switch {
+        padding: 1rem;
+        background: #f8fafc;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+    }
+
+    .form-check-input:checked {
+        background-color: #2563eb;
+        border-color: #2563eb;
+    }
+
+    /* Buttons */
+    .btn-primary {
+        background: #2563eb;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background: #1e40af;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(37, 99, 235, 0.2);
+    }
+</style>
+
+<div class="settings-container">
+    <div class="row g-0">
         <div class="col-md-3">
-            <div class="nav flex-column nav-pills" id="settings-tab" role="tablist">
-                <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#profile" type="button">Profile Settings</button>
-                <button class="nav-link" data-bs-toggle="pill" data-bs-target="#security" type="button">Security</button>
-                <button class="nav-link" data-bs-toggle="pill" data-bs-target="#email" type="button">Email Configuration</button>
-                <button class="nav-link" data-bs-toggle="pill" data-bs-target="#notifications" type="button">Notifications</button>
-                <button class="nav-link" data-bs-toggle="pill" data-bs-target="#preferences" type="button">Preferences</button>
+            <div class="settings-sidebar">
+                <h4 class="mb-4">Settings</h4>
+                <div class="nav flex-column nav-pills">
+                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#profile">
+                        <i class="fas fa-user-circle me-2"></i>Profile
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#security">
+                        <i class="fas fa-shield-alt"></i> Security
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#email">
+                        <i class="fas fa-envelope"></i> Email Setup
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#notifications">
+                        <i class="fas fa-bell"></i> Notifications
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#preferences">
+                        <i class="fas fa-sliders-h"></i> Preferences
+                    </button>
+                </div>
             </div>
         </div>
 
         <div class="col-md-9">
-            <div class="tab-content" id="settings-tabContent">
-                <!-- Profile Settings -->
-                <div class="tab-pane fade show active" id="profile">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Profile Settings</h5>
-                            <form>
+            <div class="settings-content">
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="profile">
+                        <div class="settings-card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div>
+                                    <h3 class="h4 mb-1">Profile Settings</h3>
+                                    <p class="text-muted mb-0">Manage your personal information</p>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form>
+                                    <div class="mb-3">
+                                        <label class="form-label">Profile Picture</label>
+                                        <div class="d-flex align-items-center avatar-upload">
+                                            <img src="{{ user.avatar_url|default:'default_avatar.png' }}" class="rounded-circle me-3" width="64" height="64">
+                                            <input type="file" class="form-control" style="max-width: 300px;">
+                                            <div class="avatar-overlay">
+                                                <i class="fas fa-camera"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Full Name</label>
+                                        <input type="text" class="form-control" value="{{ user.full_name }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Bio</label>
+                                        <textarea class="form-control" rows="3">{{ user.bio }}</textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="security">
+                        <div class="settings-card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <div>
+                                    <h3 class="h4 mb-1">Security Settings</h3>
+                                    <p class="text-muted mb-0">Manage your security settings</p>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form class="mb-4">
+                                    <h6>Change Password</h6>
+                                    <div class="mb-3">
+                                        <label class="form-label">Current Password</label>
+                                        <input type="password" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">New Password</label>
+                                        <input type="password" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Confirm New Password</label>
+                                        <input type="password" class="form-control">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Update Password</button>
+                                </form>
+                                <hr>
+                                <a href="#" class="btn btn-danger">Logout</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="email">
+                        <div class="settings-card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div>
+                                    <h3 class="h4 mb-1">Email Configuration</h3>
+                                    <p class="text-muted mb-0">Manage your email settings</p>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form method="POST" action="{% url 'settings:email_config_view' %}">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label class="form-label">Email Address</label>
+                                        <input type="email" name="email" class="form-control" value="{{ smtp_settings.email }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">SMTP Host</label>
+                                        <input type="text" name="host" class="form-control" value="{{ smtp_settings.host }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">SMTP Port</label>
+                                        <input type="number" name="port" class="form-control" value="{{ smtp_settings.port }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">SMTP Password</label>
+                                        <input type="password" name="password" class="form-control" value="{{ smtp_settings.password }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Connection Security</label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="security" id="useSSL" value="ssl" {% if smtp_settings.use_ssl %}checked{% endif %}>
+                                            <label class="form-check-label" for="useSSL">Use SSL</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="security" id="useTLS" value="tls" {% if smtp_settings.use_tls %}checked{% endif %}>
+                                            <label class="form-check-label" for="useTLS">Use TLS</label>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="notifications">
+                        <div class="settings-card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="fas fa-bell"></i>
+                                </div>
+                                <div>
+                                    <h3 class="h4 mb-1">Notification Preferences</h3>
+                                    <p class="text-muted mb-0">Manage your notification settings</p>
+                                </div>
+                            </div>
+                            <div class="card-body">
                                 <div class="mb-3">
-                                    <label class="form-label">Profile Picture</label>
-                                    <div class="d-flex align-items-center">
-                                        <img src="{{ user.avatar_url|default:'default_avatar.png' }}" class="rounded-circle me-3" width="64" height="64">
-                                        <input type="file" class="form-control" style="max-width: 300px;">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="emailNotif">
+                                        <label class="form-check-label" for="emailNotif">Email Notifications</label>
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Full Name</label>
-                                    <input type="text" class="form-control" value="{{ user.full_name }}">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Bio</label>
-                                    <textarea class="form-control" rows="3">{{ user.bio }}</textarea>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Save Changes</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Security Settings -->
-                <div class="tab-pane fade" id="security">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Security Settings</h5>
-                            <form class="mb-4">
-                                <h6>Change Password</h6>
-                                <div class="mb-3">
-                                    <label class="form-label">Current Password</label>
-                                    <input type="password" class="form-control">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">New Password</label>
-                                    <input type="password" class="form-control">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Confirm New Password</label>
-                                    <input type="password" class="form-control">
-                                </div>
-                                <button type="submit" class="btn btn-primary">Update Password</button>
-                            </form>
-                            <hr>
-                            <a href="#" class="btn btn-danger">Logout</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Email Settings -->
-                <div class="tab-pane fade" id="email">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Email Configuration</h5>
-                            <form method="POST" action="{% url 'settings:email_config_view' %}">
-                                {% csrf_token %}
-                                <div class="mb-3">
-                                    <label class="form-label">Email Address</label>
-                                    <input type="email" name="email" class="form-control" value="{{ smtp_settings.email }}">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">SMTP Host</label>
-                                    <input type="text" name="host" class="form-control" value="{{ smtp_settings.host }}">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">SMTP Port</label>
-                                    <input type="number" name="port" class="form-control" value="{{ smtp_settings.port }}">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">SMTP Password</label>
-                                    <input type="password" name="password" class="form-control" value="{{ smtp_settings.password }}">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Connection Security</label>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="security" id="useSSL" value="ssl" {% if smtp_settings.use_ssl %}checked{% endif %}>
-                                        <label class="form-check-label" for="useSSL">Use SSL</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="security" id="useTLS" value="tls" {% if smtp_settings.use_tls %}checked{% endif %}>
-                                        <label class="form-check-label" for="useTLS">Use TLS</label>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="reminderNotif">
+                                        <label class="form-check-label" for="reminderNotif">Subscription Reminders</label>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Save Changes</button>
-                            </form>
+                                <button type="submit" class="btn btn-primary">Save Preferences</button>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Notification Settings -->
-                <div class="tab-pane fade" id="notifications">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Notification Preferences</h5>
-                            <div class="mb-3">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="emailNotif">
-                                    <label class="form-check-label" for="emailNotif">Email Notifications</label>
+                    <div class="tab-pane fade" id="preferences">
+                        <div class="settings-card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="fas fa-sliders-h"></i>
+                                </div>
+                                <div>
+                                    <h3 class="h4 mb-1">User Preferences</h3>
+                                    <p class="text-muted mb-0">Manage your preferences</p>
                                 </div>
                             </div>
-                            <div class="mb-3">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="reminderNotif">
-                                    <label class="form-check-label" for="reminderNotif">Subscription Reminders</label>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Language</label>
+                                    <select class="form-select">
+                                        <option>English</option>
+                                        <option>Spanish</option>
+                                        <option>French</option>
+                                    </select>
                                 </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Save Preferences</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- User Preferences -->
-                <div class="tab-pane fade" id="preferences">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">User Preferences</h5>
-                            <div class="mb-3">
-                                <label class="form-label">Language</label>
-                                <select class="form-select">
-                                    <option>English</option>
-                                    <option>Spanish</option>
-                                    <option>French</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Time Zone</label>
-                                <select class="form-select">
-                                    <option>UTC</option>
-                                    <option>EST</option>
-                                    <option>PST</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="darkMode">
-                                    <label class="form-check-label" for="darkMode">Dark Mode</label>
+                                <div class="mb-3">
+                                    <label class="form-label">Time Zone</label>
+                                    <select class="form-select">
+                                        <option>UTC</option>
+                                        <option>EST</option>
+                                        <option>PST</option>
+                                    </select>
                                 </div>
+                                <div class="mb-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="darkMode">
+                                        <label class="form-check-label" for="darkMode">Dark Mode</label>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Preferences</button>
                             </div>
-                            <button type="submit" class="btn btn-primary">Save Preferences</button>
                         </div>
                     </div>
                 </div>
@@ -170,4 +334,34 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Animation for tab switching
+    document.querySelectorAll('[data-bs-toggle="pill"]').forEach(button => {
+        button.addEventListener('click', () => {
+            document.querySelectorAll('.settings-card').forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 300);
+            });
+        });
+    });
+
+    // Form submission feedback
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const button = form.querySelector('button[type="submit"]');
+            button.innerHTML = '<i class="fas fa-check me-2"></i>Saved';
+            button.classList.add('success');
+            setTimeout(() => {
+                button.innerHTML = 'Save Changes';
+                button.classList.remove('success');
+            }, 2000);
+        });
+    });
+</script>
 {% endblock %}

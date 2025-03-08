@@ -3,7 +3,11 @@ from .models import *
 from .forms import *
 from django.http.response import HttpResponse
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from django.db.models import Sum
+from datetime import datetime, timedelta
+import json
+
 # Create your views here.
 
 @login_required
@@ -22,7 +26,70 @@ def get_reminders(request):
 @login_required
 
 def analys_report(request):
-    return render(request, 'analys_reports.html')
+    try:
+        # Get user's subscriptions
+        subscriptions = Subscription.objects.filter(user=request.user)
+        
+        # Calculate total costs
+        monthly_subs = subscriptions.filter(renewal_frequency='monthly')
+        yearly_subs = subscriptions.filter(renewal_frequency='yearly')
+        
+        total_monthly_cost = sum([sub.cost for sub in monthly_subs])
+        total_yearly_subs_cost = sum([sub.cost for sub in yearly_subs])
+        
+        total_yearly_cost = (total_monthly_cost * 12) + total_yearly_subs_cost
+        
+        # Category distribution with proper labels
+        categories = []
+        category_costs = []
+        category_map = dict(Subscription.SERVICE_CATEGORIES)
+        
+        for category, label in Subscription.SERVICE_CATEGORIES:
+            cost = sum([sub.cost for sub in subscriptions.filter(category=category)])
+            if cost > 0:
+                categories.append(label)  # Use display name instead of code
+                category_costs.append(float(cost))
+        
+        # Get monthly trend
+        months = []
+        monthly_costs = []
+        today = datetime.now()
+        
+        for i in range(6):
+            date = today - timedelta(days=30*i)
+            month = date.strftime('%B')
+            months.insert(0, month)
+            
+            month_payments = Paid_subscription.objects.filter(
+                subscription__user=request.user,
+                paid_date__year=date.year,
+                paid_date__month=date.month
+            ).select_related('subscription')
+            
+            month_cost = sum([payment.subscription.cost for payment in month_payments])
+            monthly_costs.insert(0, float(month_cost))
+        
+        context = {
+            'subscriptions': subscriptions,
+            'total_monthly_cost': round(total_monthly_cost, 2),
+            'total_yearly_cost': round(total_yearly_cost, 2),
+            'total_subscriptions': subscriptions.count(),
+            'upcoming_renewals': subscriptions.filter(
+                next_due_date__lte=datetime.now().date() + timedelta(days=7)
+            ).count(),
+            'categories': json.dumps(categories),
+            'category_costs': json.dumps(category_costs),
+            'months': json.dumps(months),
+            'monthly_costs': json.dumps(monthly_costs),
+        }
+        
+        return render(request, 'analys_reports.html', context)
+    except Exception as e:
+        print(f"Error in analytics: {str(e)}")  # For debugging
+        return render(request, 'analys_reports.html', {
+            'error': 'Unable to load analytics data',
+            'subscriptions': Subscription.objects.filter(user=request.user)
+        })
 
 @login_required
 
@@ -125,3 +192,6 @@ def login_view(request):
             return redirect('subscriptions:home')
         return redirect('subscriptions:login_form')
     
+def logout_view(request):
+    logout(request)
+    return redirect('subscriptions:login_form')

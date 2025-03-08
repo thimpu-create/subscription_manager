@@ -5,6 +5,7 @@ from .models import SMTPSettings
 
 @login_required
 def settings_page(request):
+    print("settigns loaded")
     try:
         smtp = SMTPSettings.objects.get(user=request.user.id)
     except SMTPSettings.DoesNotExist:

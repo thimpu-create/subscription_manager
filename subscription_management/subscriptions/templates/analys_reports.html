@@ -3,6 +3,211 @@
 {% load static %}
 
 {% block content %}
+<style>
+    .stats-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
 
-<p>analys reports</p>
+    .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    }
+
+    .stats-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .stats-label {
+        color: #64748b;
+        font-size: 0.875rem;
+    }
+
+    .chart-container {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+
+    .category-pill {
+        padding: 0.5rem 1rem;
+        border-radius: 999px;
+        font-size: 0.875rem;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+        display: inline-block;
+    }
+
+    .entertainment { background: #fee2e2; color: #dc2626; }
+    .utility { background: #e0f2fe; color: #0284c7; }
+    .software { background: #dcfce7; color: #059669; }
+    .other { background: #f3e8ff; color: #7e22ce; }
+</style>
+
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="container py-4">
+    <h1 class="mb-4">Subscription Analytics</h1>
+
+    {% if error %}
+        <div class="alert alert-warning">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <!-- Summary Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stats-card">
+                <div class="stats-value">${{ total_monthly_cost|default:"0" }}</div>
+                <div class="stats-label">Monthly Spending</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <div class="stats-value">${{ total_yearly_cost|default:"0" }}</div>
+                <div class="stats-label">Yearly Spending</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <div class="stats-value">{{ total_subscriptions|default:"0" }}</div>
+                <div class="stats-label">Active Subscriptions</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <div class="stats-value">{{ upcoming_renewals|default:"0" }}</div>
+                <div class="stats-label">Upcoming Renewals</div>
+            </div>
+        </div>
+    </div>
+
+    {% if not error %}
+        <!-- Charts Row -->
+        <div class="row">
+            <!-- Category Distribution -->
+            <div class="col-md-6 mb-4">
+                <div class="chart-container">
+                    <h5 class="mb-4">Spending by Category</h5>
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Monthly Trend -->
+            <div class="col-md-6 mb-4">
+                <div class="chart-container">
+                    <h5 class="mb-4">Monthly Spending Trend</h5>
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Subscription Details -->
+    <div class="chart-container">
+        <h5 class="mb-4">Subscription Breakdown</h5>
+        {% if subscriptions %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Cost</th>
+                            <th>Renewal</th>
+                            <th>Next Due</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sub in subscriptions %}
+                        <tr>
+                            <td>{{ sub.name }}</td>
+                            <td><span class="category-pill {{ sub.category }}">{{ sub.get_category_display }}</span></td>
+                            <td>${{ sub.cost }}</td>
+                            <td>{{ sub.get_renewal_frequency_display }}</td>
+                            <td>{{ sub.next_due_date }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-4">
+                <p class="text-muted">No subscriptions found</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+// Only initialize charts if data is available
+{% if categories and category_costs and not error %}
+    // Category Distribution Chart
+    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+    new Chart(categoryCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ categories|safe }},
+            datasets: [{
+                data: {{ category_costs|safe }},
+                backgroundColor: [
+                    '#dc2626',  // Entertainment
+                    '#0284c7',  // Utility
+                    '#059669',  // Software
+                    '#7e22ce'   // Other
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Monthly Trend Chart
+    const trendCtx = document.getElementById('trendChart').getContext('2d');
+    new Chart(trendCtx, {
+        type: 'line',
+        data: {
+            labels: {{ months|safe }},
+            datasets: [{
+                label: 'Monthly Spending',
+                data: {{ monthly_costs|safe }},
+                borderColor: '#2563eb',
+                tension: 0.3,
+                fill: true,
+                backgroundColor: 'rgba(37, 99, 235, 0.1)'
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value;
+                        }
+                    }
+                }
+            }
+        }
+    });
+{% endif %}
+</script>
 {% endblock %}
