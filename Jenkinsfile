@@ -4,12 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'subscription-manager'
         DOCKER_TAG = "${BUILD_NUMBER}"
-        // Add registry credentials if needed
-        // DOCKER_REGISTRY_CREDENTIALS = credentials('docker-registry-credentials')
-    }
-
-    options {
-        skipStagesAfterUnstable()
+        PYTHON_VERSION = '3.11'
     }
 
     stages {
@@ -19,19 +14,18 @@ pipeline {
             }
         }
 
-        stage('Build and Test') {
-            agent {
-                docker {
-                    image 'python:3.11-slim'
-                    args '-v /var/run/docker.sock:/var/run/docker.sock'
-                }
-            }
+        stage('Setup Python') {
             steps {
                 sh '''
-                    python -m pip install --upgrade pip
-                    pip install -r requirements.txt
-                    python manage.py test
+                    python3 -m pip install --upgrade pip
+                    python3 -m pip install -r requirements.txt
                 '''
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh 'python3 manage.py test'
             }
         }
 
@@ -50,11 +44,11 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    // Ensure docker-compose is available
+                    // Install docker-compose if not present
                     sh '''
                         if ! [ -x "$(command -v docker-compose)" ]; then
-                            curl -L "https://github.com/docker/compose/releases/download/v2.23.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-                            chmod +x /usr/local/bin/docker-compose
+                            sudo curl -L "https://github.com/docker/compose/releases/download/v2.23.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+                            sudo chmod +x /usr/local/bin/docker-compose
                         fi
                     '''
                     
@@ -70,14 +64,16 @@ pipeline {
 
     post {
         always {
+            cleanWs()
             script {
-                // Clean up old images safely
-                sh '''
-                    if command -v docker &> /dev/null; then
+                try {
+                    sh '''
+                        docker system prune -f
                         docker image prune -f
-                        docker container prune -f
-                    fi
-                '''
+                    '''
+                } catch (err) {
+                    echo "Docker cleanup failed: ${err}"
+                }
             }
         }
         success {
