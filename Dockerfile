@@ -1,38 +1,37 @@
 # Use an official Python runtime as a parent image
-FROM python:3.11-slim
+FROM python:3.11
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
-ENV PYTHONDONTWRITEBYTECODE=1
 
-# Set working directory
+# Set the working directory inside the container
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    gcc \
-    && rm -rf /var/lib/apt/lists/*
+# Copy the requirements file first
+COPY requirements.txt /app/
 
-# Install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install gunicorn
+# Install dependencies
+RUN pip install --upgrade pip
+RUN pip install -r /app/requirements.txt
 
-# Copy project
-COPY . .
-
-# Collect static files
-RUN python manage.py collectstatic --noinput
+# Copy the entire project (including manage.py) to the container
+COPY . /app/
 
 # Run migrations
-RUN python manage.py migrate
+RUN python3 manage.py migrate
 
-# Create non-root user
-RUN useradd -m myuser
-USER myuser
+# Create superuser (non-interactively)
+RUN python3 manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'admin@example.com', 'password')"
 
-# Expose the port
+# # Collect static files (optional)
+# RUN python3 manage.py collectstatic --noinput
+
+# Expose the application port
 EXPOSE 8000
 
-# Start Gunicorn
+# Set environment variables for Django settings (optional)
+ENV DJANGO_SETTINGS_MODULE=subscription_management.settings
+
+# Start the application using the built-in Python server
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "subscription_management.wsgi:application"]
+
