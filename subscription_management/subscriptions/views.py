@@ -8,6 +8,7 @@ from django.db.models import Sum
 from datetime import datetime, timedelta
 import json
 from django.contrib import messages
+from django.core.paginator import Paginator
 
 # Create your views here.
 
@@ -16,18 +17,25 @@ def home(request):
     return render(request, 'home.html')
 
 @login_required
-
 def manage_subs(request):
-    subscriptions = Subscription.objects.filter(user=request.user).order_by('next_due_date')  # Order by the next due date, descending
-    active_page = 'subscriptions'
-    return render(request, 'manage_subscription.html', {'subscriptions': subscriptions, 'active_page': active_page})
+    subscription_list = Subscription.objects.filter(user=request.user)
+    paginator = Paginator(subscription_list, 10)  # Show 10 items per page
+    
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'active_page': 'subscriptions',
+        'subscriptions': page_obj,
+        'page_obj': page_obj,
+    }
+    return render(request, 'manage_subscription.html', context)
 
 @login_required
-
 def get_reminders(request):
     return render(request, 'get_reminders.html')
-@login_required
 
+@login_required
 def analys_report(request):
     try:
         # Get user's subscriptions
@@ -95,7 +103,6 @@ def analys_report(request):
         })
 
 @login_required
-
 def add_subs_view(request):
     if request.method == "GET":
         form = SubscriptionForm(user=request.user)
@@ -110,7 +117,6 @@ def add_subs_view(request):
             return redirect('subscriptions:manage_subs')
 
 @login_required
-
 def record_payment(request, subscription_id):
     # Fetch the subscription object by its ID
     subscription = Subscription.objects.get(id=subscription_id)
@@ -139,7 +145,6 @@ def record_payment(request, subscription_id):
     return redirect('subscriptions:manage_subs')  # Redirect to the subscriptions management page
 
 @login_required
-
 def edit_subscription(request, subscription_id):
     subscription = get_object_or_404(Subscription, id=subscription_id, user=request.user)
     
@@ -193,8 +198,6 @@ def payment_history(request, subscription_id):
     # Pass the subscription and payment history to the template
     return render(request, 'payment_history.html', {'subscription': subscription, 'payment_history': payment_history})
 
-
-
 def login_form(request):
     return render(request, 'login_form.html')
 
@@ -205,7 +208,7 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('subscriptions:home')
+            return redirect('subscriptions:dashboard')
         return redirect('subscriptions:login_form')
     
 def logout_view(request):
