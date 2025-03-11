@@ -40,10 +40,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'subscriptions',
     'settings',
+    "tailwind",
+    "theme",
 ]
+
+TAILWIND_APP_NAME = 'theme'
 
 INSTALLED_APPS += ['crispy_forms']
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -71,6 +77,9 @@ TEMPLATES = [
             ],
         },
     },
+]
+INTERNAL_IPS = [
+    "127.0.0.1",
 ]
 
 WSGI_APPLICATION = 'subscription_management.wsgi.application'
@@ -121,7 +130,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+# Tell Django where to find Tailwind's static files
+TAILWIND_APP_NAME = "theme"
+
+# Collect static files properly
+STATICFILES_DIRS = [
+    BASE_DIR / "theme/static",
+]
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_URL = "/static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

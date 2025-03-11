@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.db.models import Sum
 from datetime import datetime, timedelta
 import json
+from django.contrib import messages
 
 # Create your views here.
 
@@ -18,7 +19,9 @@ def home(request):
 
 def manage_subs(request):
     subscriptions = Subscription.objects.filter(user=request.user).order_by('next_due_date')  # Order by the next due date, descending
-    return render(request, 'manage_subscription.html', {'subscriptions': subscriptions})
+    active_page = 'subscriptions'
+    return render(request, 'manage_subscription.html', {'subscriptions': subscriptions, 'active_page': active_page})
+
 @login_required
 
 def get_reminders(request):
@@ -96,7 +99,8 @@ def analys_report(request):
 def add_subs_view(request):
     if request.method == "GET":
         form = SubscriptionForm(user=request.user)
-        return render(request, 'add_subs.html', {'form': form})
+        active_page = 'subscriptions'
+        return render(request, 'add_subs.html', {'form': form, 'active_page': active_page})
     if request.method == "POST":
         form = SubscriptionForm(request.POST)
         if form.is_valid():
@@ -137,24 +141,36 @@ def record_payment(request, subscription_id):
 @login_required
 
 def edit_subscription(request, subscription_id):
-    # Retrieve the subscription object by its ID
-    subscription = get_object_or_404(Subscription, id=subscription_id)
+    subscription = get_object_or_404(Subscription, id=subscription_id, user=request.user)
     
     if request.method == 'POST':
-        # If the form is submitted (POST request), bind the data to the form
-        form = SubscriptionForm(request.POST, instance=subscription)
+        form = SubscriptionForm(request.POST, instance=subscription, user=request.user)
+        print("POST data:", request.POST)
         
         if form.is_valid():
-            # If the form is valid, save the changes to the subscription
-            form.save()
-            # Redirect to the subscriptions management page or wherever appropriate
-            return redirect('subscriptions:manage_subs')
+            try:
+                subscription = form.save(commit=False)
+                subscription.user = request.user
+                
+                # next_due_date will be calculated in form's save method
+                subscription.save()
+                
+                messages.success(request, "Subscription updated successfully!")
+                return redirect('subscriptions:manage_subs')
+            except Exception as e:
+                print("Error saving form:", str(e))
+                messages.error(request, f"Error saving subscription: {str(e)}")
+        else:
+            print("Form errors:", form.errors)
+            messages.error(request, "Please correct the errors below.")
     else:
-        # If the form is not submitted, create a form instance with the current subscription data
-        form = SubscriptionForm(instance=subscription)
+        form = SubscriptionForm(instance=subscription, user=request.user)
 
-    # Render the form in the template
-    return render(request, 'edit_subs.html', {'form': form})
+    return render(request, 'edit_subs.html', {
+        'form': form,
+        'subscription': subscription
+    })
+
 @login_required
 def deleted_subscription(request, subscription_id):
     # Fetch the subscription object by its ID, or return 404 if not found
@@ -195,3 +211,8 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('subscriptions:login_form')
+
+@login_required
+def dashboard(request):
+    active_page = 'dashboard'
+    return render(request, 'dashboard.html', context={'active_page': active_page})

@@ -1,4 +1,5 @@
 {% load static %}
+{% load static tailwind_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +19,7 @@
     <!-- Custom CSS -->
     <link href="{% static 'styles.css' %}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+    {% tailwind_css %}
     <style>
         :root {
             --primary-color: #2563eb;
@@ -99,23 +100,8 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'subscriptions:manage_subs' %}">
-                            <i class="fas fa-list-ul me-1"></i> Subscriptions
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'subscriptions:analys_report' %}">
-                            <i class="fas fa-chart-line me-1"></i> Reports
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'settings:settings_page' %}">
-                            <i class="fas fa-cog me-1"></i> Settings
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-danger" href="{% url 'subscriptions:logout' %}">
-                            <i class="fas fa-sign-out-alt me-1"></i> Logout
+                        <a class="nav-link text-danger" href="">
+                            <i class="fas fa-sign-out-alt me-1"></i> Login
                         </a>
                     </li>
                 </ul>

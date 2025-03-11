@@ -1,0 +1,116 @@
+{% load static tailwind_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    {% tailwind_css %}
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50">
+    <!-- Mobile Header with Hamburger -->
+    <div class="md:hidden bg-white border-b border-gray-200 fixed top-0 w-full z-30">
+        <div class="flex justify-between items-center px-4 py-3">
+            <span class="text-lg font-semibold text-gray-800">Subscription Manager</span>
+            <button id="mobile-menu-button" class="text-gray-500 hover:text-gray-700 focus:outline-none">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="flex h-screen pt-[56px] md:pt-0">
+        <!-- Sidebar - Hidden on mobile by default -->
+        <div id="sidebar" class="fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 md:relative md:w-64 bg-white border-r border-gray-200 transition-transform duration-200 ease-in-out z-20">
+            <div class="sticky top-0 pt-3">
+                <ul class="space-y-2 px-3">
+                    <li>
+                        <a class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 {% if active_page == 'dashboard' %}bg-indigo-600 text-white hover:bg-indigo-700 hover:text-white{% endif %}" 
+                           href="{% url 'subscriptions:dashboard' %}">
+                            <i class="fas fa-home mr-3"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 {% if active_page == 'subscriptions' %}bg-indigo-600 text-white hover:bg-indigo-700 hover:text-white{% endif %}" 
+                           href="{% url 'subscriptions:manage_subs' %}">
+                            <i class="fas fa-list mr-3"></i>
+                            <span>My Subscriptions</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 {% if active_page == 'analytics' %}bg-indigo-600 text-white hover:bg-indigo-700 hover:text-white{% endif %}" 
+                           href="#">
+                            <i class="fas fa-chart-line mr-3"></i>
+                            <span>Analytics</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 {% if active_page == 'settings' %}bg-indigo-600 text-white hover:bg-indigo-700 hover:text-white{% endif %}" 
+                           href="#">
+                            <i class="fas fa-cog mr-3"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 overflow-auto">
+            <div class="p-4 md:p-8">
+                {% block dashboard_content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay for mobile -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black opacity-0 pointer-events-none transition-opacity duration-200 ease-in-out md:hidden"></div>
+
+    {% block extra_scripts %}{% endblock %}
+
+    <script>
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        function toggleSidebar() {
+            const isOpen = sidebar.classList.contains('translate-x-0');
+            
+            if (isOpen) {
+                // Close sidebar
+                sidebar.classList.remove('translate-x-0');
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.remove('opacity-50', 'pointer-events-auto');
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+            } else {
+                // Open sidebar
+                sidebar.classList.remove('-translate-x-full');
+                sidebar.classList.add('translate-x-0');
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+                overlay.classList.add('opacity-50', 'pointer-events-auto');
+            }
+        }
+
+        mobileMenuButton.addEventListener('click', toggleSidebar);
+        overlay.addEventListener('click', toggleSidebar);
+
+        // Close sidebar when window is resized to desktop view
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) { // md breakpoint
+                sidebar.classList.remove('translate-x-0');
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.remove('opacity-50', 'pointer-events-auto');
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+            }
+        });
+    </script>
+</body>
+</html>

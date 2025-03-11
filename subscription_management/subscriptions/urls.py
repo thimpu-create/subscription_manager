@@ -3,7 +3,8 @@ from . import views
 app_name = 'subscriptions'
 
 urlpatterns = [
-    path('', views.home, name = "home"),
+    # path('', views.home, name = "home"),
+    path('', views.dashboard, name='dashboard'),
     path('manage_subs/', views.manage_subs, name = "manage_subs"),
     path('get_reminders/', views.get_reminders, name = "get_reminders"),
     path('analys_reports/', views.analys_report, name = "analys_report"),

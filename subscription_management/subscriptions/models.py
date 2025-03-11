@@ -3,6 +3,7 @@ from django.utils.timezone import now
 from datetime import timedelta
 from django.utils import timezone
 from django.contrib.auth.models import User
+
 class Subscription(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     SERVICE_CATEGORIES = [

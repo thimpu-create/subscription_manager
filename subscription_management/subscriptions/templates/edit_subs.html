@@ -1,90 +1,149 @@
-{% extends 'base.html' %}
+{% extends 'dash_base.html' %}
 {% load static %}
 {% load custom_filters %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock %}
 
+{% block dashboard_content %}
+<div class="max-w-2xl mx-auto py-8 px-4">
+    <!-- Back Button -->
+    <a href="{% url 'subscriptions:manage_subs' %}" 
+       class="inline-flex items-center text-gray-600 hover:text-gray-800 mb-6 group">
+        <i class="fas fa-arrow-left mr-2 transform transition-transform group-hover:-translate-x-1"></i>
+        <span>Back to Subscriptions</span>
+    </a>
 
-{% block content %}
-<style>
-    /* Custom styles for modern form design */
-.container {
-    max-width: 600px;
-}
-
-.form-control, .form-select {
-    border-radius: 0.5rem;
-    border: 1px solid #ddd;
-    transition: border-color 0.3s ease;
-}
-
-.form-control:focus, .form-select:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-button, .btn {
-    border-radius: 0.5rem;
-}
-
-.btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
-}
-
-.btn-primary:hover {
-    background-color: #0056b3;
-    border-color: #004085;
-}
-
-.btn-secondary {
-    background-color: #6c757d;
-    border-color: #6c757d;
-}
-
-.btn-secondary:hover {
-    background-color: #5a6268;
-    border-color: #4e555b;
-}
-
-.shadow-sm {
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-</style>
-<div class="container mt-5">
-    <h1 class="text-primary mb-4">Add Subscription</h1>
-    <form method="post" class="p-4 border rounded shadow-sm bg-light">
-        {% csrf_token %}
-        
-        <div class="mb-3">
-            <label for="id_name" class="form-label">Subscription Name</label>
-            {{ form.name|add_class:"form-control" }}
-        </div>
-        
-        <div class="mb-3">
-            <label for="id_category" class="form-label">Category</label>
-            {{ form.category|add_class:"form-select" }}
-        </div>
-        
-        <div class="mb-3">
-            <label for="id_cost" class="form-label">Cost</label>
-            {{ form.cost|add_class:"form-control" }}
-        </div>
-        
-        <div class="mb-3">
-            <label for="id_subscription_date" class="form-label">Subscription Date</label>
-            {{ form.subscription_date|add_class:"form-control" }}
-        </div>
-        
-        <div class="mb-3">
-            <label for="id_renewal_frequency" class="form-label">Renewal Frequency</label>
-            {{ form.renewal_frequency|add_class:"form-select" }}
+    <div class="bg-white rounded-xl shadow-lg p-8">
+        <!-- Header Section -->
+        <div class="flex items-center justify-between mb-8 pb-4 border-b border-gray-100">
+            <div class="flex items-center">
+                <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mr-4">
+                    <i class="fas {% if form.instance.pk %}fa-edit{% else %}fa-plus{% endif %} text-xl text-indigo-600"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800">
+                    {% if form.instance.pk %}Edit{% else %}Add New{% endif %} Subscription
+                </h1>
+            </div>
+            {% if form.instance.pk %}
+            <span class="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-full text-sm font-medium">
+                ID: #{{ form.instance.pk }}
+            </span>
+            {% endif %}
         </div>
 
-        <div class="d-flex justify-content-between">
-            <button type="submit" class="btn btn-primary px-4 py-2">Save Subscription</button>
-            <a href="{% url 'subscriptions:manage_subs' %}" class="btn btn-secondary px-4 py-2">Cancel</a>
+        {% if messages %}
+        <div class="mt-4">
+            {% for message in messages %}
+            <div class="p-3 rounded-md text-sm 
+                {% if message.tags == 'error' %}bg-red-100 text-red-600{% else %}bg-green-100 text-green-600{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
         </div>
-    </form>
+        {% endif %}
+
+        <form method="post" id="subscriptionForm" class="space-y-6">
+            {% csrf_token %}
+            
+            <div class="grid gap-6 md:grid-cols-2">
+                <!-- Name Field -->
+                <div class="relative">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">
+                        <i class="fas fa-tag mr-2 text-indigo-500"></i>Subscription Name
+                    </label>
+                    {{ form.name|add_class:"w-full pl-10 pr-4 py-2 rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200" }}
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none mt-8">
+                        <i class="fas fa-signature text-gray-400"></i>
+                    </div>
+                </div>
+
+                <!-- Category Field -->
+                <div class="relative">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">
+                        <i class="fas fa-folder mr-2 text-indigo-500"></i>Category
+                    </label>
+                    {{ form.category|add_class:"w-full pl-10 pr-4 py-2 rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200" }}
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none mt-8">
+                        <i class="fas fa-th-large text-gray-400"></i>
+                    </div>
+                </div>
+
+                <!-- Cost Field -->
+                <div class="relative">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">
+                        <i class="fas fa-dollar-sign mr-2 text-indigo-500"></i>Cost
+                    </label>
+                    {{ form.cost|add_class:"w-full pl-10 pr-4 py-2 rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200" }}
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none mt-8">
+                        <i class="fas fa-money-bill-wave text-gray-400"></i>
+                    </div>
+                </div>
+
+                <!-- Date Field -->
+                <div class="relative">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">
+                        <i class="fas fa-calendar mr-2 text-indigo-500"></i>Start Date
+                    </label>
+                    {{ form.subscription_date|add_class:"w-full pl-10 pr-4 py-2 rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 datepicker" }}
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none mt-8">
+                        <i class="fas fa-calendar-alt text-gray-400"></i>
+                    </div>
+                </div>
+
+                <!-- Renewal Frequency - Full Width -->
+                <div class="relative md:col-span-2">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">
+                        <i class="fas fa-sync mr-2 text-indigo-500"></i>Renewal Frequency
+                    </label>
+                    {{ form.renewal_frequency|add_class:"w-full pl-10 pr-4 py-2 rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200" }}
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none mt-8">
+                        <i class="fas fa-clock text-gray-400"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-end space-x-4 pt-6 mt-6 border-t border-gray-100">
+                <a href="{% url 'subscriptions:manage_subs' %}" 
+                   class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors inline-flex items-center">
+                    <i class="fas fa-times mr-2"></i>Cancel
+                </a>
+                <button type="submit" 
+                        id="submitBtn"
+                        class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors inline-flex items-center">
+                    <i class="fas fa-save mr-2"></i>
+                    <span>{% if form.instance.pk %}Update{% else %}Save{% endif %} Subscription</span>
+                    <svg id="loadingSpinner" class="hidden animate-spin ml-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    flatpickr(".datepicker", {
+        dateFormat: "Y-m-d",
+        defaultDate: "today",
+        allowInput: true,
+        animate: true,
+        theme: "light",
+        position: "auto"
+    });
+
+    document.getElementById('subscriptionForm').addEventListener('submit', function() {
+        const submitBtn = document.getElementById('submitBtn');
+        const spinner = document.getElementById('loadingSpinner');
+        submitBtn.disabled = true;
+        spinner.classList.remove('hidden');
+        submitBtn.querySelector('span').textContent = '{% if form.instance.pk %}Updating...{% else %}Saving...{% endif %}';
+    });
+</script>
+{% endblock %}
 {% endblock %}
