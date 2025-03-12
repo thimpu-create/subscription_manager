@@ -65,38 +65,43 @@
 
     <div class="flex h-screen pt-[56px] md:pt-16">
         <!-- Sidebar - Hidden on mobile by default -->
-        <div id="sidebar" class="fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 md:relative md:w-64 bg-white border-r border-gray-200 transition-transform duration-200 ease-in-out z-20">
-            <div class="sticky top-0 pt-3">
-                <ul class="space-y-2 px-3">
-                    <li>
-                        <a class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 {% if active_page == 'dashboard' %}bg-indigo-600 text-white hover:bg-indigo-700 hover:text-white{% endif %}" 
-                           href="{% url 'subscriptions:dashboard' %}">
-                            <i class="fas fa-home mr-3"></i>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 {% if active_page == 'subscriptions' %}bg-indigo-600 text-white hover:bg-indigo-700 hover:text-white{% endif %}" 
-                           href="{% url 'subscriptions:manage_subs' %}">
-                            <i class="fas fa-list mr-3"></i>
-                            <span>My Subscriptions</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 {% if active_page == 'analytics' %}bg-indigo-600 text-white hover:bg-indigo-700 hover:text-white{% endif %}" 
-                           href="#">
-                            <i class="fas fa-chart-line mr-3"></i>
-                            <span>Analytics</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 {% if active_page == 'settings' %}bg-indigo-600 text-white hover:bg-indigo-700 hover:text-white{% endif %}" 
-                           href="{% url 'settings:settings_page' %}">
-                            <i class="fas fa-cog mr-3"></i>
-                            <span>Settings</span>
-                        </a>
-                    </li>
-                </ul>
+        <div id="sidebar" class="fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 md:relative md:w-64 bg-white border-r border-gray-200 transition-transform duration-200 ease-in-out z-20 flex flex-col">
+            <div class="flex-1">
+                <div class="sticky top-0 pt-3">
+                    <ul class="space-y-2 px-3">
+                        <li>
+                            <a class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 {% if active_page == 'dashboard' %}bg-indigo-600 text-white hover:bg-indigo-700 hover:text-white{% endif %}" 
+                               href="{% url 'subscriptions:dashboard' %}">
+                                <i class="fas fa-home mr-3"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 {% if active_page == 'subscriptions' %}bg-indigo-600 text-white hover:bg-indigo-700 hover:text-white{% endif %}" 
+                               href="{% url 'subscriptions:manage_subs' %}">
+                                <i class="fas fa-list mr-3"></i>
+                                <span>My Subscriptions</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 {% if active_page == 'analytics' %}bg-indigo-600 text-white hover:bg-indigo-700 hover:text-white{% endif %}" 
+                               href="#">
+                                <i class="fas fa-chart-line mr-3"></i>
+                                <span>Analytics</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 {% if active_page == 'settings' %}bg-indigo-600 text-white hover:bg-indigo-700 hover:text-white{% endif %}" 
+                               href="{% url 'settings:settings_page' %}">
+                                <i class="fas fa-cog mr-3"></i>
+                                <span>Settings</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="p-4 text-center text-sm text-gray-500 border-t">
+                Made with ❤️ by Thimpu
             </div>
         </div>
 
