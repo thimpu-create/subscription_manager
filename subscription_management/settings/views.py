@@ -6,12 +6,14 @@ from .models import SMTPSettings
 @login_required
 def settings_page(request):
     print("settigns loaded")
+    active_page = "settings"
     try:
         smtp = SMTPSettings.objects.get(user=request.user.id)
     except SMTPSettings.DoesNotExist:
         smtp = None
     context = {
-        'smtp_settings': smtp
+        'smtp_settings': smtp,
+        'active_page': active_page
     }
     return render(request, 'settings.html', context)
 

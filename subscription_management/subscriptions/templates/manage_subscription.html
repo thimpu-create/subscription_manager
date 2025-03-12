@@ -71,6 +71,10 @@
                                class="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors">
                                <i class="fas fa-history"></i>
                             </a>
+                            <button onclick="showReminderModal('{{ sub.id }}', '{{ sub.name }}', '{{ sub.next_due_date }}')"
+                                    class="p-2 text-purple-600 hover:bg-purple-50 rounded-full transition-colors">
+                                <i class="fas fa-bell"></i>
+                            </button>
                         </div>
                     </td>
                 </tr>
@@ -177,6 +181,10 @@
                    class="flex-1 inline-flex justify-center items-center px-3 py-2 border border-blue-600 text-blue-600 rounded-full hover:bg-blue-50">
                    <i class="fas fa-history"></i>
                 </a>
+                <button onclick="showReminderModal('{{ sub.id }}', '{{ sub.name }}', '{{ sub.next_due_date }}')"
+                        class="flex-1 inline-flex justify-center items-center px-3 py-2 border border-purple-600 text-purple-600 rounded-full hover:bg-purple-50">
+                    <i class="fas fa-bell"></i>
+                </button>
             </div>
         </div>
         {% empty %}
@@ -280,7 +288,87 @@
     </div>
 </div>
 
+<!-- Reminder Modal -->
+<div id="reminderModal" class="fixed inset-0 hidden z-50">
+    <!-- Backdrop with blur -->
+    <div class="absolute inset-0 bg-purple-900/30 backdrop-blur-sm transition-opacity duration-300 opacity-0" id="reminder-backdrop"></div>
+    
+    <!-- Modal Container -->
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-75 opacity-0 translate-y-12" id="reminder-content">
+            <!-- Floating Bell Icon -->
+            <div class="relative -mt-16 mx-auto w-32 h-32">
+                <div class="absolute inset-0 animate-pulse">
+                    <div class="absolute inset-0 bg-purple-100 rounded-full"></div>
+                    <div class="absolute inset-4 bg-purple-200 rounded-full"></div>
+                    <div class="absolute inset-8 bg-white rounded-full shadow-lg flex items-center justify-center">
+                        <i class="fas fa-bell text-3xl text-purple-600 animate-swing"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="px-8 py-6">
+                <h3 class="text-2xl font-bold text-center text-gray-900 mb-2" id="reminderTitle">Set Reminder</h3>
+                <p class="text-purple-600 text-sm text-center mb-6" id="subscriptionDetails"></p>
+
+                <!-- Reminder Options -->
+                <div class="space-y-4">
+                    <div class="flex -mx-2">
+                        <div class="w-1/2 px-2">
+                            <button onclick="setReminder(1)" class="w-full p-3 rounded-xl border-2 border-purple-200 hover:border-purple-500 hover:bg-purple-50 transition-colors">
+                                <i class="fas fa-clock mb-2 text-purple-500"></i>
+                                <div class="text-sm font-medium">1 Day Before</div>
+                            </button>
+                        </div>
+                        <div class="w-1/2 px-2">
+                            <button onclick="setReminder(3)" class="w-full p-3 rounded-xl border-2 border-purple-200 hover:border-purple-500 hover:bg-purple-50 transition-colors">
+                                <i class="fas fa-calendar-day mb-2 text-purple-500"></i>
+                                <div class="text-sm font-medium">3 Days Before</div>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex -mx-2">
+                        <div class="w-1/2 px-2">
+                            <button onclick="setReminder(7)" class="w-full p-3 rounded-xl border-2 border-purple-200 hover:border-purple-500 hover:bg-purple-50 transition-colors">
+                                <i class="fas fa-calendar-week mb-2 text-purple-500"></i>
+                                <div class="text-sm font-medium">1 Week Before</div>
+                            </button>
+                        </div>
+                        <div class="w-1/2 px-2">
+                            <button onclick="showCustomReminder()" class="w-full p-3 rounded-xl border-2 border-purple-200 hover:border-purple-500 hover:bg-purple-50 transition-colors">
+                                <i class="fas fa-calendar-alt mb-2 text-purple-500"></i>
+                                <div class="text-sm font-medium">Custom Date</div>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Custom Date Input (Hidden by default) -->
+                    <div id="customDateSection" class="hidden">
+                        <input type="datetime-local" 
+                               id="customReminderDate" 
+                               class="w-full px-4 py-2 border-2 border-purple-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200">
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center space-x-3 mt-8">
+                    <button onclick="closeReminderModal()" 
+                            class="flex-1 px-4 py-2 bg-white border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors">
+                        Cancel
+                    </button>
+                    <button onclick="saveReminder()" 
+                            class="flex-1 px-4 py-2 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors">
+                        Set Reminder
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% block extra_scripts %}
+{{ block.super }}
 <script>
     let currentDeleteForm = null;
     const deleteModal = document.getElementById('deleteModal');
@@ -348,6 +436,77 @@
             return false;
         };
     });
+
+// Reminder Modal Functions
+let currentSubscriptionId = null;
+
+function showReminderModal(id, name, dueDate) {
+    currentSubscriptionId = id;
+    const modal = document.getElementById('reminderModal');
+    const backdrop = document.getElementById('reminder-backdrop');
+    const content = document.getElementById('reminder-content');
+    
+    document.getElementById('subscriptionDetails').textContent = `${name} - Due: ${dueDate}`;
+    
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        backdrop.classList.add('opacity-100');
+        content.classList.remove('scale-75', 'opacity-0', 'translate-y-12');
+    }, 10);
+}
+
+function closeReminderModal() {
+    const modal = document.getElementById('reminderModal');
+    const backdrop = document.getElementById('reminder-backdrop');
+    const content = document.getElementById('reminder-content');
+    
+    backdrop.classList.remove('opacity-100');
+    content.classList.add('scale-75', 'opacity-0', 'translate-y-12');
+    
+    setTimeout(() => {
+        modal.classList.add('hidden');
+        document.getElementById('customDateSection').classList.add('hidden');
+    }, 300);
+}
+
+function showCustomReminder() {
+    document.getElementById('customDateSection').classList.remove('hidden');
+}
+
+function setReminder(days) {
+    // Here you would typically make an AJAX call to your backend
+    console.log(`Setting reminder for subscription ${currentSubscriptionId} - ${days} days before`);
+    // Add your AJAX call here
+    closeReminderModal();
+}
+
+function saveReminder() {
+    const customDate = document.getElementById('customReminderDate').value;
+    if (customDate) {
+        // Handle custom date reminder
+        console.log(`Setting custom reminder for subscription ${currentSubscriptionId} on ${customDate}`);
+        // Add your AJAX call here
+    }
+    closeReminderModal();
+}
+
+// Add animation for bell icon
+document.documentElement.style.setProperty('--fa-animation-duration', '2s');
 </script>
+
+<style>
+@keyframes swing {
+    0%, 100% { transform: rotate(0deg); }
+    20% { transform: rotate(15deg); }
+    40% { transform: rotate(-10deg); }
+    60% { transform: rotate(5deg); }
+    80% { transform: rotate(-5deg); }
+}
+
+.animate-swing {
+    animation: swing 2s ease infinite;
+    transform-origin: top center;
+}
+</style>
 {% endblock %}
 {% endblock %}
