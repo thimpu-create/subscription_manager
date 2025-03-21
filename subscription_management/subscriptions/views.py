@@ -203,12 +203,16 @@ def login_form(request):
 
 def login_view(request):
     if request.method == "POST":
+        print("login is called")
         username = request.POST.get('username')
         password = request.POST.get('password')
+        print(username, password)
         user = authenticate(request, username=username, password=password)
         if user is not None:
+            print("user is found")
             login(request, user)
             return redirect('subscriptions:dashboard')
+        print("user is not found")
         return redirect('subscriptions:login_form')
     
 def logout_view(request):

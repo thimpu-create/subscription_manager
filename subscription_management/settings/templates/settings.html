@@ -1,425 +1,423 @@
 {% extends 'dash_base.html' %}
 
 {% block dashboard_content %}
-<div class="max-w-7xl mx-auto px-4">
-  <div class="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
-    
-    <!-- Sidebar -->
-    <div class="md:w-80 bg-gray-50">
-      <div class="p-8">
-        <h4 class="text-xl font-semibold text-gray-800 mb-6">Settings</h4>
-        <nav class="space-y-2">
-          <button class="tab-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl bg-blue-600 text-white font-medium transition-all" data-tab="profile">
-            <i class="fas fa-user-circle"></i>
-            <span>Profile</span>
-          </button>
-          <button class="tab-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 font-medium transition-all" data-tab="security">
-            <i class="fas fa-shield-alt"></i>
-            <span>Security</span>
-          </button>
-          <button class="tab-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 font-medium transition-all" data-tab="email">
-            <i class="fas fa-envelope"></i>
-            <span>Email Setup</span>
-          </button>
-          <button class="tab-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 font-medium transition-all" data-tab="notifications">
-            <i class="fas fa-bell"></i>
-            <span>Notifications</span>
-          </button>
-          <button class="tab-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 font-medium transition-all" data-tab="preferences">
-            <i class="fas fa-sliders-h"></i>
-            <span>Preferences</span>
-          </button>
-        </nav>
-      </div>
+<div class="max-w-7xl mx-auto px-4 py-6">
+  <!-- Header -->
+  <div class="mb-6">
+    <h1 class="text-2xl font-semibold text-gray-900">Settings</h1>
+    <p class="text-sm text-gray-500">Manage your subscription management preferences and configurations</p>
+  </div>
+
+  <div class="bg-white rounded-lg shadow">
+    <!-- Tabs Header -->
+    <div class="border-b border-gray-200">
+      <nav class="flex -mb-px">
+        <button class="tab-btn whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm border-blue-500 text-blue-600" data-tab="account">
+          <i class="far fa-user-circle mr-2"></i>Account
+        </button>
+        <button class="tab-btn whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="billing">
+          <i class="far fa-credit-card mr-2"></i>Billing & Invoicing
+        </button>
+        <button class="tab-btn whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="notifications">
+          <i class="far fa-bell mr-2"></i>Notifications
+        </button>
+        <button class="tab-btn whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="integrations">
+          <i class="fas fa-plug mr-2"></i>Integrations
+        </button>
+        <button class="tab-btn whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="advanced">
+          <i class="fas fa-sliders-h mr-2"></i>Advanced
+        </button>
+      </nav>
     </div>
-    
-    <!-- Content Area -->
-    <div class="flex-1 p-10">
-      <!-- Profile Tab -->
-      <div id="profile" class="tab-content">
-        <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all">
-          <div class="flex items-start space-x-6 p-8">
-            <div class="p-3 bg-blue-50 text-blue-600 rounded-lg">
-              <i class="fas fa-user fa-lg"></i>
+
+    <!-- Tab Contents -->
+    <div class="p-6">
+      <!-- Account Settings -->
+      <div id="account" class="tab-content">
+        <div class="space-y-6">
+          <!-- Profile Section -->
+          <section class="bg-white">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-medium text-gray-900">Profile Information</h3>
+              <span class="text-xs text-gray-500">Date joined: {{ request.user.date_joined }}</span>
             </div>
-            <div>
-              <h3 class="text-lg font-semibold text-gray-800">Profile Settings</h3>
-              <p class="text-gray-500">Manage your personal information</p>
-            </div>
-          </div>
-          <div class="px-8 pb-8">
-            <form>
-              <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Profile Picture</label>
+            <div class="grid grid-cols-6 gap-6">
+              <!-- Profile Picture -->
+              <div class="col-span-6 sm:col-span-2">
                 <div class="flex items-center space-x-4">
-                  <div class="relative">
-                    <img src="{{ user.avatar_url|default:'default_avatar.png' }}" class="w-16 h-16 rounded-full object-cover">
-                    <div class="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition-all">
-                      <i class="fas fa-camera text-white"></i>
-                    </div>
-                  </div>
-                  <input type="file" class="flex-1 max-w-xs py-2 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  <img src="https://ui-avatars.com/api/?name=John+Doe" class="h-16 w-16 rounded-full">
+                  <button class="text-sm text-blue-600 hover:text-blue-700">Change</button>
                 </div>
               </div>
-              <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                <input type="text" class="w-full py-2 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{ user.full_name }}">
-              </div>
-              <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Bio</label>
-                <textarea rows="3" class="w-full py-2 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{ user.bio }}</textarea>
-              </div>
-              <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">Save Changes</button>
-            </form>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Security Tab -->
-      <div id="security" class="tab-content hidden">
-        <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all">
-          <div class="flex items-start space-x-6 p-8">
-            <div class="p-3 bg-blue-50 text-blue-600 rounded-lg">
-              <i class="fas fa-shield-alt fa-lg"></i>
-            </div>
-            <div>
-              <h3 class="text-lg font-semibold text-gray-800">Security Settings</h3>
-              <p class="text-gray-500">Manage your security settings</p>
-            </div>
-          </div>
-          <div class="px-8 pb-8">
-            <form class="mb-8">
-              <h6 class="text-sm font-semibold text-gray-700 mb-4">Change Password</h6>
-              <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
-                <input type="password" class="w-full py-2 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
-                <input type="password" class="w-full py-2 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
-                <input type="password" class="w-full py-2 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">Update Password</button>
-            </form>
-            <hr class="my-4">
-            <a href="#" class="inline-block px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all">Logout</a>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Email Tab -->
-      <div id="email" class="tab-content hidden">
-        <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all">
-          <div class="flex items-start space-x-6 p-8">
-            <div class="p-3 bg-blue-50 text-blue-600 rounded-lg">
-              <i class="fas fa-envelope fa-lg"></i>
-            </div>
-            <div>
-              <h3 class="text-lg font-semibold text-gray-800">Email Configuration</h3>
-              <p class="text-gray-500">Manage your email settings</p>
-            </div>
-          </div>
-          <div class="px-8 pb-8">
-            <form method="POST" action="{% url 'settings:email_config_view' %}">
-              {% csrf_token %}
-              <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                <input type="email" name="email" class="w-full py-2 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{ smtp_settings.email }}">
-              </div>
-              <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">SMTP Host</label>
-                <input type="text" name="host" class="w-full py-2 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{ smtp_settings.host }}">
-              </div>
-              <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">SMTP Port</label>
-                <input type="number" name="port" class="w-full py-2 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{ smtp_settings.port }}">
-              </div>
-              <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">SMTP Password</label>
-                <input type="password" name="password" class="w-full py-2 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{ smtp_settings.password }}">
-              </div>
-              <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Connection Security</label>
-                <div class="mt-2 space-y-2">
-                  <div class="flex items-center">
-                    <input id="useSSL" name="security" type="radio" value="ssl" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300" {% if smtp_settings.use_ssl %}checked{% endif %}>
-                    <label for="useSSL" class="ml-3 block text-sm font-medium text-gray-700">Use SSL</label>
+              <!-- Basic Info -->
+              <div class="col-span-6 sm:col-span-4 space-y-4">
+                <div class="grid grid-cols-6 gap-4">
+                  <div class="col-span-6 sm:col-span-3">
+                    <label class="block text-sm font-medium text-gray-700">First Name</label>
+                    <input type="text" value="{{request.user.first_name}}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                   </div>
-                  <div class="flex items-center">
-                    <input id="useTLS" name="security" type="radio" value="tls" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300" {% if smtp_settings.use_tls %}checked{% endif %}>
-                    <label for="useTLS" class="ml-3 block text-sm font-medium text-gray-700">Use TLS</label>
+                  <div class="col-span-6 sm:col-span-3">
+                    <label class="block text-sm font-medium text-gray-700">Last Name</label>
+                    <input type="text" value="{{request.user.last_name}}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                   </div>
                 </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">Email</label>
+                  <input type="email" value="{{request.user.email}}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                </div>
               </div>
-              <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">Save Changes</button>
-            </form>
-          </div>
+            </div>
+          </section>
+
+          <!-- Security Section -->
+          <section class="bg-white pt-6 border-t">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Security</h3>
+            <div class="space-y-4">
+              <div class="flex items-center justify-between py-4 border-b">
+                <div>
+                  <h4 class="text-sm font-medium text-gray-900">Two-Factor Authentication</h4>
+                  <p class="text-sm text-gray-500">Add an extra layer of security to your account</p>
+                </div>
+                <button class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100">Enable</button>
+              </div>
+              <div class="flex items-center justify-between py-4">
+                <div>
+                  <h4 class="text-sm font-medium text-gray-900">Active Sessions</h4>
+                  <p class="text-sm text-gray-500">Manage your active sessions across devices</p>
+                </div>
+                <button class="text-sm text-blue-600 hover:text-blue-700">View all</button>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
-      
-      <!-- Notifications Tab -->
+
+      <!-- Billing Settings -->
+      <div id="billing" class="tab-content hidden">
+        <div class="space-y-6">
+          <!-- Payment Methods -->
+          <section class="bg-white">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Payment Methods</h3>
+            <div class="space-y-4">
+              <!-- Existing Card -->
+              <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div class="flex items-center space-x-3">
+                  <i class="fab fa-cc-visa text-2xl text-blue-600"></i>
+                  <div>
+                    <p class="text-sm font-medium text-gray-900">Visa ending in 4242</p>
+                    <p class="text-sm text-gray-500">Expires 12/24</p>
+                  </div>
+                </div>
+                <button class="text-sm text-red-600 hover:text-red-700">Remove</button>
+              </div>
+              <button class="flex items-center text-sm text-blue-600 hover:text-blue-700">
+                <i class="fas fa-plus mr-2"></i>Add new payment method
+              </button>
+            </div>
+          </section>
+
+          <!-- Billing History -->
+          <section class="bg-white pt-6 border-t">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-medium text-gray-900">Billing History</h3>
+              <button class="text-sm text-blue-600 hover:text-blue-700">Download all</button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Invoice</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Aug 1, 2023</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$29.00</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span class="px-2 py-1 text-xs font-medium text-green-800 bg-green-100 rounded-full">Paid</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm text-blue-600 hover:text-blue-700">
+                      <a href="#">Download</a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- Notifications Settings -->
       <div id="notifications" class="tab-content hidden">
-        <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all">
-          <div class="flex items-start space-x-6 p-8">
-            <div class="p-3 bg-blue-50 text-blue-600 rounded-lg">
-              <i class="fas fa-bell fa-lg"></i>
-            </div>
-            <div>
-              <h3 class="text-lg font-semibold text-gray-800">Notification Preferences</h3>
-              <p class="text-gray-500">Manage your notification settings</p>
-            </div>
-          </div>
-          <div class="px-8 pb-8">
-            <div class="space-y-4 mb-6">
-              <div class="p-4 bg-gray-50 rounded-xl">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <h5 class="font-medium text-gray-700">Email Notifications</h5>
-                    <p class="text-sm text-gray-500">Receive updates via email</p>
-                  </div>
-                  <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="emailNotif" class="sr-only peer">
-                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+        <div class="space-y-6">
+          <!-- Email Notifications -->
+          <section class="bg-white">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Email Notifications</h3>
+            <div class="space-y-4">
+              <div class="flex items-center justify-between py-4 border-b">
+                <div>
+                  <h4 class="text-sm font-medium text-gray-900">Subscription Renewals</h4>
+                  <p class="text-sm text-gray-500">Get notified before subscriptions renew</p>
+                </div>
+                <div class="flex items-center">
+                  <select class="mr-4 text-sm border-gray-300 rounded-md">
+                    <option>7 days before</option>
+                    <option>3 days before</option>
+                    <option>1 day before</option>
+                  </select>
+                  <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider round"></span>
                   </label>
                 </div>
               </div>
-              <div class="p-4 bg-gray-50 rounded-xl">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <h5 class="font-medium text-gray-700">Subscription Reminders</h5>
-                    <p class="text-sm text-gray-500">Get reminders before renewals</p>
-                  </div>
-                  <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="reminderNotif" class="sr-only peer">
-                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                  </label>
+              
+              <!-- Additional notification settings -->
+              <div class="flex items-center justify-between py-4 border-b">
+                <div>
+                  <h4 class="text-sm font-medium text-gray-900">Payment Failures</h4>
+                  <p class="text-sm text-gray-500">Get notified when a payment fails</p>
                 </div>
+                <label class="switch">
+                  <input type="checkbox" checked>
+                  <span class="slider round"></span>
+                </label>
+              </div>
+              <div class="flex items-center justify-between py-4 border-b">
+                <div>
+                  <h4 class="text-sm font-medium text-gray-900">New Features</h4>
+                  <p class="text-sm text-gray-500">Get notified about new features and updates</p>
+                </div>
+                <label class="switch">
+                  <input type="checkbox">
+                  <span class="slider round"></span>
+                </label>
               </div>
             </div>
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">Save Preferences</button>
-          </div>
+          </section>
         </div>
       </div>
-      
-      <!-- Preferences Tab -->
-      <div id="preferences" class="tab-content hidden">
-        <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all">
-          <div class="flex items-start space-x-6 p-8">
-            <div class="p-3 bg-blue-50 text-blue-600 rounded-lg">
-              <i class="fas fa-sliders-h fa-lg"></i>
-            </div>
-            <div>
-              <h3 class="text-lg font-semibold text-gray-800">User Preferences</h3>
-              <p class="text-gray-500">Manage your preferences</p>
-            </div>
-          </div>
-          <div class="px-8 pb-8">
-            <div class="mb-6">
-              <label class="block text-sm font-medium text-gray-700 mb-2">Language</label>
-              <select class="w-full py-2 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                <option>English</option>
-                <option>Spanish</option>
-                <option>French</option>
-              </select>
-            </div>
-            <div class="mb-6">
-              <label class="block text-sm font-medium text-gray-700 mb-2">Time Zone</label>
-              <select class="w-full py-2 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                <option>UTC</option>
-                <option>EST</option>
-                <option>PST</option>
-              </select>
-            </div>
-            <div class="mb-6">
-              <div class="p-4 bg-gray-50 rounded-xl">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <h5 class="font-medium text-gray-700">Dark Mode</h5>
-                    <p class="text-sm text-gray-500">Enable dark theme</p>
+
+      <!-- Integrations Settings -->
+      <div id="integrations" class="tab-content hidden">
+        <div class="space-y-6">
+          <!-- Payment Integrations -->
+          <section class="bg-white">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Payment Integrations</h3>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center space-x-3">
+                    <img src="https://logo.clearbit.com/stripe.com" class="h-8 w-8 rounded">
+                    <h4 class="text-sm font-medium text-gray-900">Stripe</h4>
                   </div>
-                  <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="darkMode" class="sr-only peer">
-                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                  </label>
+                  <button class="px-3 py-1 text-sm text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100">Connect</button>
+                </div>
+                <p class="text-sm text-gray-500">Process payments and manage subscriptions</p>
+              </div>
+              <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center space-x-3">
+                    <img src="https://logo.clearbit.com/paypal.com" class="h-8 w-8 rounded">
+                    <h4 class="text-sm font-medium text-gray-900">PayPal</h4>
+                  </div>
+                  <button class="px-3 py-1 text-sm text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100">Connect</button>
+                </div>
+                <p class="text-sm text-gray-500">Accept payments via PayPal</p>
+              </div>
+
+              <!-- Square -->
+              <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center space-x-3">
+                    <img src="https://logo.clearbit.com/squareup.com" class="h-8 w-8 rounded">
+                    <h4 class="text-sm font-medium text-gray-900">Square</h4>
+                  </div>
+                  <button class="px-3 py-1 text-sm text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100">Connect</button>
+                </div>
+                <p class="text-sm text-gray-500">Process in-person and online payments</p>
+              </div>
+
+              <!-- Razorpay -->
+              <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center space-x-3">
+                    <img src="https://logo.clearbit.com/razorpay.com" class="h-8 w-8 rounded">
+                    <h4 class="text-sm font-medium text-gray-900">Razorpay</h4>
+                  </div>
+                  <button class="px-3 py-1 text-sm text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100">Connect</button>
+                </div>
+                <p class="text-sm text-gray-500">Accept payments in multiple currencies</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Calendar Integrations -->
+          <section class="bg-white pt-6 border-t">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Calendar Integrations</h3>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <!-- Google Calendar -->
+              <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center space-x-3">
+                    <img src="https://logo.clearbit.com/google.com" class="h-8 w-8 rounded">
+                    <h4 class="text-sm font-medium text-gray-900">Google Calendar</h4>
+                  </div>
+                  <button class="px-3 py-1 text-sm text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100">Connect</button>
+                </div>
+                <p class="text-sm text-gray-500">Sync renewal dates and payment deadlines</p>
+              </div>
+
+              <!-- Outlook Calendar -->
+              <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center space-x-3">
+                    <img src="https://logo.clearbit.com/microsoft.com" class="h-8 w-8 rounded">
+                    <h4 class="text-sm font-medium text-gray-900">Outlook Calendar</h4>
+                  </div>
+                  <button class="px-3 py-1 text-sm text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100">Connect</button>
+                </div>
+                <p class="text-sm text-gray-500">Sync with Microsoft Outlook calendar</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Accounting Integrations -->
+          <section class="bg-white pt-6 border-t">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Accounting Integrations</h3>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <!-- QuickBooks -->
+              <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center space-x-3">
+                    <img src="https://logo.clearbit.com/quickbooks.com" class="h-8 w-8 rounded">
+                    <h4 class="text-sm font-medium text-gray-900">QuickBooks</h4>
+                  </div>
+                  <button class="px-3 py-1 text-sm text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100">Connect</button>
+                </div>
+                <p class="text-sm text-gray-500">Sync expenses and invoices</p>
+              </div>
+
+              <!-- Xero -->
+              <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center space-x-3">
+                    <img src="https://logo.clearbit.com/xero.com" class="h-8 w-8 rounded">
+                    <h4 class="text-sm font-medium text-gray-900">Xero</h4>
+                  </div>
+                  <button class="px-3 py-1 text-sm text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100">Connect</button>
+                </div>
+                <p class="text-sm text-gray-500">Sync with Xero accounting</p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- Advanced Settings -->
+      <div id="advanced" class="tab-content hidden">
+        <div class="space-y-6">
+          <!-- API Access -->
+          <section class="bg-white">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">API Access</h3>
+            <div class="space-y-4">
+              <div class="p-4 bg-gray-50 rounded-lg">
+                <div class="flex items-center justify-between mb-2">
+                  <h4 class="text-sm font-medium text-gray-900">API Key</h4>
+                  <button class="text-sm text-blue-600 hover:text-blue-700">Generate New Key</button>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <input type="password" value="sk_test_123456789" class="flex-1 text-sm bg-white border-gray-300 rounded-md" readonly>
+                  <button class="p-2 text-gray-500 hover:text-gray-700">
+                    <i class="far fa-copy"></i>
+                  </button>
                 </div>
               </div>
             </div>
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">Save Preferences</button>
-          </div>
+          </section>
+
+          <!-- Customization -->
+          <section class="bg-white pt-6 border-t">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Customization</h3>
+            <div class="space-y-4">
+              <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">Default Currency</label>
+                  <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                    <option>USD ($)</option>
+                    <option>EUR (€)</option>
+                    <option>GBP (£)</option>
+                    <option>JPY (¥)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">Date Format</label>
+                  <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                    <option>MM/DD/YYYY</option>
+                    <option>DD/MM/YYYY</option>
+                    <option>YYYY-MM-DD</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Data Management -->
+          <section class="bg-white pt-6 border-t">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Data Management</h3>
+            <div class="space-y-4">
+              <div class="flex items-center justify-between py-4 border-b">
+                <div>
+                  <h4 class="text-sm font-medium text-gray-900">Export Data</h4>
+                  <p class="text-sm text-gray-500">Download all your subscription data</p>
+                </div>
+                <button class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100">
+                  Export
+                </button>
+              </div>
+
+              <!-- Import Data -->
+              <div class="flex items-center justify-between py-4 border-b">
+                <div>
+                  <h4 class="text-sm font-medium text-gray-900">Import Data</h4>
+                  <p class="text-sm text-gray-500">Import subscriptions from CSV</p>
+                </div>
+                <button class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100">
+                  Import
+                </button>
+              </div>
+
+              <!-- Data Backup -->
+              <div class="flex items-center justify-between py-4 border-b">
+                <div>
+                  <h4 class="text-sm font-medium text-gray-900">Automatic Backups</h4>
+                  <p class="text-sm text-gray-500">Backup your data automatically</p>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" checked>
+                  <span class="slider round"></span>
+                </label>
+              </div>
+
+              <div class="flex items-center justify-between py-4 border-b">
+                <div>
+                  <h4 class="text-sm font-medium text-gray-900">Delete Account</h4>
+                  <p class="text-sm text-gray-500">Permanently delete your account and data</p>
+                </div>
+                <button class="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-md hover:bg-red-100">
+                  Delete
+                </button>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
     </div>
   </div>
 </div>
-
-<style>
-  /* Animations */
-  @keyframes fadeIn {
-    from { 
-      opacity: 0; 
-      transform: translateY(20px) scale(0.95); 
-      filter: blur(8px);
-    }
-    to { 
-      opacity: 1; 
-      transform: translateY(0) scale(1); 
-      filter: blur(0);
-    }
-  }
-
-  @keyframes slideIn {
-    from {
-      transform: translateX(-20px);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-
-  @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-  }
-
-  /* Tab content animation */
-  .tab-content:not(.hidden) {
-    animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  }
-
-  /* Tab button hover effects */
-  .tab-btn {
-    position: relative;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .tab-btn:hover {
-    transform: translateX(8px);
-  }
-
-  .tab-btn i {
-    animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  /* Card hover effects */
-  .tab-content > div {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    background: linear-gradient(to bottom, #ffffff, #fafafa);
-  }
-
-  .tab-content > div:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-    background: linear-gradient(to bottom, #ffffff, #ffffff);
-  }
-
-  /* Remove borders from inputs */
-  input, textarea, select {
-    border: none !important;
-    background: #f8fafc;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  }
-
-  input:focus, textarea:focus, select:focus {
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
-  }
-
-  /* Adjust spacing for better visual hierarchy */
-  .mb-6 {
-    margin-bottom: 2rem;
-  }
-
-  .space-y-2 {
-    margin-top: 1.5rem;
-  }
-
-  /* Enhanced button styles */
-  button[type="submit"] {
-    padding: 0.75rem 2rem;
-    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
-  }
-
-  /* Soften the tab button styles */
-  .tab-btn {
-    border-radius: 1rem;
-    padding: 1rem 1.5rem;
-  }
-
-  .tab-btn:hover {
-    background: rgba(59, 130, 246, 0.05);
-  }
-
-  /* Input focus effects */
-  input:focus, textarea:focus, select:focus {
-    transition: all 0.3s ease;
-    transform: scale(1.01);
-  }
-
-  /* Button effects */
-  button[type="submit"] {
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-  }
-
-  button[type="submit"]:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-  }
-
-  button[type="submit"]:active {
-    transform: translateY(0);
-  }
-
-  button[type="submit"]::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 60%);
-    transform: translate(-50%, -50%) scale(0);
-    transition: transform 0.5s ease;
-  }
-
-  button[type="submit"]:hover::after {
-    transform: translate(-50%, -50%) scale(2);
-  }
-
-  /* Toggle switch animation */
-  .peer:checked ~ div::after {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  /* Save button success animation */
-  .save-success {
-    animation: pulse 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  /* Card sections hover effect */
-  .p-6 > div {
-    transition: all 0.2s ease;
-  }
-
-  .p-6 > div:hover {
-    transform: scale(1.01);
-  }
-
-  /* Icons hover effect */
-  .fa-lg {
-    transition: transform 0.3s ease;
-  }
-
-  .p-3:hover .fa-lg {
-    transform: scale(1.2) rotate(5deg);
-  }
-</style>
 
 <script>
   // Tab switching functionality
@@ -429,8 +427,8 @@
   function switchTab(tabId) {
     // Deactivate all tabs
     tabButtons.forEach(btn => {
-      btn.classList.remove('bg-blue-600', 'text-white');
-      btn.classList.add('text-gray-600', 'hover:bg-gray-100');
+      btn.classList.remove('border-blue-500', 'text-blue-600');
+      btn.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
     });
     
     // Hide all content
@@ -441,8 +439,8 @@
     // Activate current tab
     const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
     if (activeButton) {
-      activeButton.classList.add('bg-blue-600', 'text-white');
-      activeButton.classList.remove('text-gray-600', 'hover:bg-gray-100');
+      activeButton.classList.add('border-blue-500', 'text-blue-600');
+      activeButton.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
       
       // Show current content
       const currentContent = document.getElementById(tabId);
@@ -467,7 +465,7 @@
     if (hash && document.getElementById(hash)) {
       switchTab(hash);
     } else {
-      switchTab('profile'); // Default tab
+      switchTab('account'); // Default tab
     }
   });
   
