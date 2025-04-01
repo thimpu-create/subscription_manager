@@ -6,3 +6,4 @@ from .models import *
 
 admin.site.register(Subscription)
 admin.site.register(Paid_subscription)
+admin.site.register(SubscriptionActivity)

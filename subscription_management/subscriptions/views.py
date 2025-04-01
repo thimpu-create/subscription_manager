@@ -10,6 +10,8 @@ import json
 from django.contrib import messages
 from django.core.paginator import Paginator
 
+from .utility import get_monthly_cost
+
 # Create your views here.
 
 @login_required
@@ -221,5 +223,17 @@ def logout_view(request):
 
 @login_required
 def dashboard(request):
+    user = request.user
+    subscriptions = Subscription.objects.filter(user=user)
+    activities = SubscriptionActivity.objects.select_related('subscription').filter(
+        subscription__user=user
+    ).order_by('-created_at')[:10]
     active_page = 'dashboard'
-    return render(request, 'dashboard.html', context={'active_page': active_page})
+    spendings = get_monthly_cost(subscriptions)
+    context = {
+        'active_page': active_page,
+        'subscriptions': subscriptions,
+        'spendings': spendings,
+        'activities': activities,
+    }
+    return render(request, 'dashboard.html', context)

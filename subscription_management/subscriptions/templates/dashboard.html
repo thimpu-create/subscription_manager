@@ -21,7 +21,7 @@
                 </span>
             </div>
             <div class="flex items-baseline">
-                <h3 class="text-2xl font-bold text-gray-900">8</h3>
+                <h3 class="text-2xl font-bold text-gray-900">{{ subscriptions.count }}</h3>
                 <span class="text-green-600 text-sm ml-2">Active</span>
             </div>
         </div>
@@ -35,7 +35,7 @@
                 </span>
             </div>
             <div class="flex items-baseline">
-                <h3 class="text-2xl font-bold text-gray-900">$89.99</h3>
+                <h3 class="text-2xl font-bold text-gray-900">${{spendings}}</h3>
                 <span class="text-gray-500 text-sm ml-2">/month</span>
             </div>
         </div>
@@ -44,13 +44,13 @@
         <div class="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between mb-4">
                 <span class="text-sm font-medium text-gray-500">Next Payment</span>
-                <span class="p-2 bg-blue-100 rounded-lg"></span>
+                <span class="p-2 bg-blue-100 rounded-lg">
                     <i class="fas fa-calendar text-blue-600"></i>
                 </span>
             </div>
             <div class="flex items-baseline">
                 <h3 class="text-2xl font-bold text-gray-900">May 15</h3>
-                <span class="text-blue-600 text-sm ml-2">Upcoming</span>
+                <span class="text-blue-500 text-sm ml-2">Upcoming</span>
             </div>
         </div>
 
@@ -86,50 +86,23 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
+                    {% for activity in activities %}
                     <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Netflix</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Payment</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">May 1, 2023</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$19.99</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ activity.subscription.name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ activity.get_activity_type_display }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ activity.created_at|date:"M j, Y" }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${{ activity.amount }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                Completed
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if activity.activity_type == 'paid' %}bg-green-100 text-green-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                                {{ activity.activity_type|title }}
                             </span>
                         </td>
                     </tr>
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Spotify</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Renewal</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Apr 28, 2023</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$9.99</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                Completed
-                            </span>
-                        </td>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">No recent activities found.</td>
                     </tr>
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Adobe Creative Cloud</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Payment</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Apr 25, 2023</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$29.99</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                Completed
-                            </span>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Microsoft 365</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Upcoming</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">May 15, 2023</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$6.99</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                Pending
-                            </span>
-                        </td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
