@@ -198,6 +198,43 @@
               </div>
             </div>
           </section>
+          <!-- SMTP Settings -->
+          <section class="bg-white mt-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">SMTP Settings</h3>
+            <div class="space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">SMTP Host</label>
+                  <input type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" value="{{smtp_settings.host}}" placeholder="smtp.example.com">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">SMTP Port</label>
+                  <input type="number" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" value="{{smtp_settings.port}}" placeholder="587">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">Username</label>
+                  <input type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" value="{{smtp_settings.email}}" placeholder="user@example.com">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">Password</label>
+                  <input type="password" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" value="{{smtp_settings.password}}" placeholder="••••••••">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">Encryption</label>
+                  <select class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    <option value="tls">TLS</option>
+                    <option value="ssl">SSL</option>
+                    <option value="none">None</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="pt-4">
+                <button id="save-smtp-btn" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Save SMTP Settings</button>
+                <button class="ml-4 text-blue-600 underline hover:text-blue-800">Send Test Email</button>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
 
@@ -502,5 +539,62 @@
       }, 2000);
     });
   });
+
+  document.addEventListener('DOMContentLoaded', function () {
+  const saveBtn = document.getElementById('save-smtp-btn');
+
+  if (saveBtn) {
+    saveBtn.addEventListener('click', function () {
+      const smtpHost = document.querySelector('input[placeholder="smtp.example.com"]').value;
+      const smtpPort = document.querySelector('input[placeholder="587"]').value;
+      const username = document.querySelector('input[placeholder="user@example.com"]').value;
+      const password = document.querySelector('input[placeholder="••••••••"]').value;
+      const encryption = document.querySelector('select').value;
+
+      const smtpData = {
+        host: smtpHost,
+        port: smtpPort,
+        email: username,
+        password: password,
+        encryption: encryption
+      };
+
+      fetch('/api/save-smtp-settings/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCSRFToken() // Optional: if you're using Django or similar
+        },
+        body: JSON.stringify(smtpData)
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        alert('SMTP settings saved successfully!');
+        console.log(data);
+      })
+      .catch(error => {
+        console.error('Error saving SMTP settings:', error);
+        alert('Failed to save SMTP settings.');
+      });
+    });
+  }
+
+  function getCSRFToken() {
+    const name = 'csrftoken';
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+      const trimmed = cookie.trim();
+      if (trimmed.startsWith(name + '=')) {
+        return trimmed.substring(name.length + 1);
+      }
+    }
+    return '';
+  }
+});
 </script>
 {% endblock %}

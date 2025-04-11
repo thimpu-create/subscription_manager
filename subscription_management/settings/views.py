@@ -1,6 +1,7 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth.decorators import login_required
 from .models import SMTPSettings
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 @login_required
@@ -19,42 +20,43 @@ def settings_page(request):
 
 
 @login_required
+@csrf_exempt  # Only use this if you're not sending CSRF token in JS
 def email_config_view(request):
     if request.method == 'POST':
-        email = request.POST.get('email')
-        host = request.POST.get('host')
-        port = request.POST.get('port')
-        password = request.POST.get('password')
-        security = request.POST.get('security')
+        try:
+            data = json.loads(request.body)
+            email = data.get('email')
+            host = data.get('host')
+            port = data.get('port')
+            password = data.get('password')
+            security = data.get('encryption')
 
-        ssl_bool = False
-        tls_bool = False
+            ssl_bool = security == 'ssl'
+            tls_bool = security == 'tls'
 
-        if security == 'ssl':
-            ssl_bool = True
-        if security == 'tls':
-            tls_bool = True
-        # Get or create SMTP settings for the user
-        smtp_settings, created = SMTPSettings.objects.get_or_create(
-            user=request.user,
-            defaults={
-                'email': email,
-                'host': host,
-                'port': port,
-                'password': password,
-                'use_ssl': ssl_bool,
-                'use_tls': tls_bool
-            }
-        )
+            smtp_settings, created = SMTPSettings.objects.get_or_create(
+                user=request.user,
+                defaults={
+                    'email': email,
+                    'host': host,
+                    'port': port,
+                    'password': password,
+                    'use_ssl': ssl_bool,
+                    'use_tls': tls_bool
+                }
+            )
 
-        # If settings already existed, update them
-        if not created:
-            smtp_settings.email = email
-            smtp_settings.host = host
-            smtp_settings.port = port
-            smtp_settings.password = password
-            smtp_settings.use_ssl = ssl_bool
-            smtp_settings.use_tls = tls_bool
-            smtp_settings.save()
-        
-        return redirect('settings:settings_page')
+            if not created:
+                smtp_settings.email = email
+                smtp_settings.host = host
+                smtp_settings.port = port
+                smtp_settings.password = password
+                smtp_settings.use_ssl = ssl_bool
+                smtp_settings.use_tls = tls_bool
+                smtp_settings.save()
+
+            return JsonResponse({'success': True, 'message': 'SMTP settings saved successfully'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)}, status=400)
+
+    return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=405)
